@@ -4,9 +4,7 @@
 mod RecieveMessage {
 
     #[storage]
-    struct Storage {
-        va : u128 
-    } 
+    struct Storage {} 
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -21,14 +19,10 @@ mod RecieveMessage {
             value: felt252,
         }
 
-
     #[l1_handler]
     fn msg_handler_value(ref self: ContractState, from_address: felt252, value: felt252) {
-        // assert(from_address == ...);
 
-        assert(value == 123, 'Invalid value');
-
-        self.emit(ValueReceived { l1_address: from_address, value, });
+        self.emit(ValueReceived { l1_address: from_address, value, }); 
     }
 
 }
