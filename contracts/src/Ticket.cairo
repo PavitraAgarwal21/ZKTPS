@@ -1,9 +1,12 @@
 use starknet::ContractAddress ; 
 
+// implementing the l1-l2 messaging system .
+// how to implement the l1-l2 messagin system . 
+
+
 #[starknet::interface] 
 pub trait IGetTicket<TContractState> 
 {
-
     fn getContractOwner(self: @TContractState) -> ContractAddress ;  
     fn getTicketEventIndex(self: @TContractState) -> u128 ; 
     fn getVerifier(self: @TContractState) -> ContractAddress ;   
@@ -12,7 +15,6 @@ pub trait IGetTicket<TContractState>
     fn buyTicket(ref self : TContractState , event_index : u128 , commitment : felt252  ) ;
     fn calculateFees(self : @TContractState ,  _ticketPrice : u128  ) -> (u128 , u128)  ;
     fn getTicket(self : @TContractState , _commitment : felt252 ) -> Ticket::TicketCommitment ;
-
 }
 
 

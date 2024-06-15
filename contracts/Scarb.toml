@@ -9,6 +9,17 @@ edition = "2023_11"
 starknet = ">=2.6.3"
 openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.13.0" }
 
+[dev-dependencies]
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.23.0" }
+
+[sncast.default]
+account = "account1" 
+accounts-file = "~/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+url = "https://free-rpc.nethermind.io/sepolia-juno"
+
+
+
 
 [[target.starknet-contract]]
 casm = true 
+
