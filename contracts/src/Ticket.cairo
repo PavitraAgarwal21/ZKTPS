@@ -149,8 +149,6 @@ struct inValidatedTicket {
             self.ticketEvents.write(eventIndex , _ticket_event);
             // adding that the emit of newEventTicket event 
 
-
-
         } 
         fn calculateFees(self : @ContractState ,  _ticketPrice : u128  ) -> (u128 , u128)  {
             let fees = _ticketPrice/100 ;
@@ -165,25 +163,23 @@ struct inValidatedTicket {
             let price=self.ticketEvents.read(event_index).price;
             assert(token.allowance(caller,contract_address)>=price,"allow first");
             
+            
+            // tranfering the total token from the user to the this contract 
+            let status=token.transfer_from(caller,contract_address,price);
+            assert(status==true,"transfer failed");
+
             let ticket_commitment  = TicketCommitment {
-                buyer : get_caller_address() ,
+                buyer : caller ,
                 ticketEventIndex : event_index ,
                 used : true  
             };
             self.TicketCommitments.write(commitment , ticket_commitment);
-
-            let status=token.transfer_from(caller,contract_address,price);
-            assert(status==true,"transfer failed");
-
+            
+            // triger the emit of the event 
             self.ticketEvents.write(event_index, TicketEvent {
                 noOfTicketAvl: self.ticketEvents.read(event_index).noOfTicketAvl - 1 , 
                 ..self.ticketEvents.read(event_index),
             });
-
-            // tranfering the total token from the user to the this contract 
-
-            // triger the emit of the event 
-
 
             }
 
