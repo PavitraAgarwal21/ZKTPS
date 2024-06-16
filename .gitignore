@@ -1,2 +1,24 @@
+contracts/target/
+frontend/node_modules
+
+layer1/node_modules
+layer/.env
+
+# Hardhat files
+layer1/cache
+layer1/artifacts
+
+# TypeChain files
+layer1/typechain
+layer1/typechain-types
+
+# solidity-coverage files
+layer1/coverage
+layer1/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+layer1/ignition/deployments/chain-31337
+
 contracts/target
+
 frontend/node_modules
