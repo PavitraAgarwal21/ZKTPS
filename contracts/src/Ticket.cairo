@@ -12,7 +12,7 @@ pub trait IGetTicket<TContractState>
     fn getVerifier(self: @TContractState) -> ContractAddress ;   
     fn getEventdetails(self : @TContractState , _ticketEventIndex : u128) -> Ticket::TicketEvent ; 
     fn createTicketEvent(ref self : TContractState , _price : u128 , _event_name : felt252 , _noOfTicket : u128 )  ;
-    fn buyTicket(ref self : TContractState , event_index : u128 , commitment : felt252  ) ;
+    fn buyTicket(ref self : TContractState , event_index : u128 , commitment : felt252 , token_address:ContractAddress ) ;
     fn calculateFees(self : @TContractState ,  _ticketPrice : u128  ) -> (u128 , u128)  ;
     fn getTicket(self : @TContractState , _commitment : felt252 ) -> Ticket::TicketCommitment ;
     fn verifyTicket(self : @TContractState,  
@@ -47,8 +47,9 @@ trait IERC20<TContractState> {
 #[starknet::contract] 
 mod Ticket {
 
-    use starknet::{ContractAddress, get_caller_address, storage_access::StorageBaseAddress}; 
-    use openzeppelin::token::erc20::interface::{IERC20DispatcherTrait , IERC20Dispatcher}; 
+    use starknet::{ContractAddress, get_caller_address, get_contract_address,storage_access::StorageBaseAddress}; 
+    use super::IERC20DispatcherTrait;
+    use super::IERC20Dispatcher;
     
     use super::IGetTicket ; 
 
@@ -156,15 +157,23 @@ struct inValidatedTicket {
             let total = fees + _ticketPrice ; 
             (fees , total ) 
         } 
-        fn buyTicket(ref self : ContractState , event_index : u128 , commitment : felt252  ) {
+        fn buyTicket(ref self : ContractState , event_index : u128 , commitment : felt252 , token_address:ContractAddress ) {
 
+            let token=IERC20Dispatcher{contract_address:token_address};
+            let contract_address=get_contract_address();
+            let caller=get_caller_address();
+            let price=self.ticketEvents.read(event_index).price;
+            assert(token.allowance(caller,contract_address)>=price,"allow first");
+            
             let ticket_commitment  = TicketCommitment {
                 buyer : get_caller_address() ,
                 ticketEventIndex : event_index ,
                 used : true  
             };
-
             self.TicketCommitments.write(commitment , ticket_commitment);
+
+            let status=token.transfer_from(caller,contract_address,price);
+            assert(status==true,"transfer failed");
 
             self.ticketEvents.write(event_index, TicketEvent {
                 noOfTicketAvl: self.ticketEvents.read(event_index).noOfTicketAvl - 1 , 
