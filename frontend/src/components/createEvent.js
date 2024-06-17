@@ -1,14 +1,13 @@
 import React from "react";
-import { Contract, RpcProvider } from "starknet";
+import { Contract } from "starknet";
+import { Contract_Address, get_provider } from "../web3/web3";
 
 export default function createEvent() {
   async function create_event() {
-    const contract_address = "";
+    const contract_address = Contract_Address;
     const contract_abi = "";
-    const account = "";
-    const provider = new RpcProvider({
-      nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
-    });
+    const account = localStorage.getItem("account");
+    const provider = get_provider();
     let price = document.querySelector("#price").value;
     let no_of_tickets = document.querySelector("#tickets").value;
     let event_name = document.querySelector("#name").value;
