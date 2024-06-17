@@ -238,17 +238,7 @@ pub struct valueFromL1 {
         assert(!self.nullifierHashes.read(value.nullifierhash),'Ticket was already used' ); 
         assert(self.TicketCommitments.read(value.commitmenthash).used,'Ticket does not exist' );
         assert(value.isProof == true ,'invalid ticket');
-        // chainging the state 
         self.nullifierHashes.write(value.nullifierhash, true ); 
-        // event to gave that ticket is invalidated and this event is listen by the ticket creator 
-        // let _invalidate_ticketevent = {
-        //     buyer : self.TicketCommitments.read(value.commitmenthash).buyer ,
-        //     ticketEventIndex : self.TicketCommitments.read(value.commitmenthash).ticketEventIndex ,
-        //     creatorOfTicket : self.ticketEvents.read(self.TicketCommitments.read(value.commitmenthash).ticketEventIndex).creator ,
-        //     commitment : value.commitmenthash ,
-        //     nullifierhash : value.nullifierhash ,
-        // } ;
-        // tigerring the emit of the vent 
         self.emit(inValidatedTicket{
             buyer : self.TicketCommitments.read(value.commitmenthash).buyer,
             ticketEventIndex : self.TicketCommitments.read(value.commitmenthash).ticketEventIndex,
