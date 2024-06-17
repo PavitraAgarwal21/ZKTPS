@@ -12,9 +12,9 @@ pub trait IGetTicket<TContractState>
     fn getVerifier(self: @TContractState) -> ContractAddress ;   
     fn getEventdetails(self : @TContractState , _ticketEventIndex : u128) -> Ticket::TicketEvent ; 
     fn createTicketEvent(ref self : TContractState , _price : u128 , _event_name : felt252 , _noOfTicket : u128 )  ;
-    fn buyTicket(ref self : TContractState , event_index : u128 , commitment : felt252 , token_address:ContractAddress ) ;
+    fn buyTicket(ref self : TContractState , event_index : u128 , commitment : u256 , token_address:ContractAddress ) ;
     fn calculateFees(self : @TContractState ,  _ticketPrice : u128  ) -> (u128 , u128)  ;
-    fn getTicket(self : @TContractState , _commitment : felt252 ) -> Ticket::TicketCommitment ;
+    fn getTicket(self : @TContractState , _commitment : u256 ) -> Ticket::TicketCommitment ;
     fn verifyTicket(self : @TContractState,  
         _commitment : felt252 ,
         _nullifierhash : felt252
@@ -60,8 +60,8 @@ mod Ticket {
     ticketEventIndex :u128 ,
     verifier : ContractAddress , 
     ticketEvents : LegacyMap::<u128 , TicketEvent> ,
-    TicketCommitments : LegacyMap::<felt252 , TicketCommitment > ,
-    nullifierHashes : LegacyMap::<felt252 , bool>  
+    TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
+    nullifierHashes : LegacyMap::<u256 , bool>  
     }
 
     #[constructor]
@@ -110,8 +110,8 @@ struct inValidatedTicket {
     buyer : ContractAddress ,
     ticketEventIndex : u128 ,
     creatorOfTicket : ContractAddress ,
-    commitment  : felt252 ,
-    nullifierhash : felt252 , 
+    commitment  : u256 ,
+    nullifierhash : u256 , 
 }
 
 
@@ -132,7 +132,7 @@ struct inValidatedTicket {
         fn getEventdetails(self : @ContractState , _ticketEventIndex : u128) -> TicketEvent {
             self.ticketEvents.read(_ticketEventIndex) 
         }
-        fn getTicket(self : @ContractState , _commitment : felt252 ) -> TicketCommitment {
+        fn getTicket(self : @ContractState , _commitment : u256 ) -> TicketCommitment {
             self.TicketCommitments.read(_commitment) 
         }
          fn createTicketEvent(ref self : ContractState , _price : u128 , _event_name : felt252 , _noOfTicket : u128 )  
@@ -155,7 +155,7 @@ struct inValidatedTicket {
             let total = fees + _ticketPrice ; 
             (fees , total ) 
         } 
-        fn buyTicket(ref self : ContractState , event_index : u128 , commitment : felt252 , token_address:ContractAddress ) {
+        fn buyTicket(ref self : ContractState , event_index : u128 , commitment : u256 , token_address:ContractAddress ) {
 
             let token=IERC20Dispatcher{contract_address:token_address};
             let contract_address=get_contract_address();
@@ -184,8 +184,8 @@ struct inValidatedTicket {
             }
 
         fn verifyTicket( self : @ContractState,  
-            _commitment : felt252 ,
-            _nullifierhash : felt252
+            _commitment : u256 ,
+            _nullifierhash : u256
         ) -> bool {
 
             if (self.nullifierHashes.read(_nullifierhash)) {
