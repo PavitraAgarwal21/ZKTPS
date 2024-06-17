@@ -11,13 +11,13 @@ pub trait IGetTicket<TContractState>
     fn getTicketEventIndex(self: @TContractState) -> u128 ; 
     fn getVerifier(self: @TContractState) -> ContractAddress ;   
     fn getEventdetails(self : @TContractState , _ticketEventIndex : u128) -> Ticket::TicketEvent ; 
-    fn createTicketEvent(ref self : TContractState , _price : u128 , _event_name : felt252 , _noOfTicket : u128 )  ;
+    fn createTicketEvent(ref self : TContractState , _price : u256 , _event_name : felt252 , _noOfTicket : u128 )  ;
     fn buyTicket(ref self : TContractState , event_index : u128 , commitment : u256 , token_address:ContractAddress ) ;
-    fn calculateFees(self : @TContractState ,  _ticketPrice : u128  ) -> (u128 , u128)  ;
+    fn calculateFees(self : @TContractState ,  _ticketPrice : u256  ) -> (u256 , u256)  ;
     fn getTicket(self : @TContractState , _commitment : u256 ) -> Ticket::TicketCommitment ;
     fn verifyTicket(self : @TContractState,  
-        _commitment : felt252 ,
-        _nullifierhash : felt252
+        _commitment : u256 ,
+        _nullifierhash : u256
     ) -> bool ;
 
 }
@@ -74,7 +74,7 @@ mod Ticket {
     #[derive(Drop, Serde , starknet::Store)] 
     pub struct TicketEvent {
         creator : ContractAddress ,
-        price : u128 ,
+        price : u256 ,
         eventName : felt252 ,
         noOfTicketAvl : u128 ,
     }
@@ -101,7 +101,7 @@ struct newTicketEvent {
     ticketEventIndex : u128 ,
     eventName : felt252 , 
     availableTickets : u128 ,
-    price   : u128 
+    price   : u256 
 }
 
 #[derive(Drop , Serde , starknet::Event)] 
@@ -135,7 +135,7 @@ struct inValidatedTicket {
         fn getTicket(self : @ContractState , _commitment : u256 ) -> TicketCommitment {
             self.TicketCommitments.read(_commitment) 
         }
-         fn createTicketEvent(ref self : ContractState , _price : u128 , _event_name : felt252 , _noOfTicket : u128 )  
+         fn createTicketEvent(ref self : ContractState , _price : u256 , _event_name : felt252 , _noOfTicket : u128 )  
         {
             // updating ticket event index 
             let eventIndex = self.ticketEventIndex.read() + 1 ;
@@ -150,7 +150,7 @@ struct inValidatedTicket {
             // adding that the emit of newEventTicket event 
 
         } 
-        fn calculateFees(self : @ContractState ,  _ticketPrice : u128  ) -> (u128 , u128)  {
+        fn calculateFees(self : @ContractState ,  _ticketPrice : u256  ) -> (u256 , u256)  {
             let fees = _ticketPrice/100 ;
             let total = fees + _ticketPrice ; 
             (fees , total ) 
@@ -161,12 +161,12 @@ struct inValidatedTicket {
             let contract_address=get_contract_address();
             let caller=get_caller_address();
             let price=self.ticketEvents.read(event_index).price;
-            assert(token.allowance(caller,contract_address)>=price,"allow first");
+            assert(token.allowance(caller,contract_address)>=price,'allow first');
             
             
             // tranfering the total token from the user to the this contract 
             let status=token.transfer_from(caller,contract_address,price);
-            assert(status==true,"transfer failed");
+            assert(status==true,'transfer failed');
 
             let ticket_commitment  = TicketCommitment {
                 buyer : caller ,
@@ -212,11 +212,11 @@ struct inValidatedTicket {
 #[derive(Drop, Serde , starknet::Store)] 
 pub struct valueFromL1 {
     isProof : bool ,
-    commitmenthash : felt252 ,
-    nullifierhash :  felt252 
+    commitmenthash : u256 ,
+    nullifierhash :  u256 
 }
     #[l1_handler]
-    fn invalidateTicketL1Handler (ref self: ContractState, from_address: felt252, valuee : valueFromL1 ) {
+    fn invalidateTicketL1Handler (ref self: ContractState, from_address:felt252, value : valueFromL1 ) {
 
         // value comming from the l1 contract should be convert into the type of 
         // pub struct valueFromL1 {
@@ -226,33 +226,36 @@ pub struct valueFromL1 {
 
         // }
        let  value = valueFromL1 {
-                isProof : true  ,
-           commitmenthash : "12" ,
-           nullifierhash :  "34" 
-          } ; 
+                isProof : true,
+           commitmenthash : 1223,
+           nullifierhash :  12321 
+          }; 
 
-
-
-
-
+        // let verifier=self.verifier.read();
         // contract address checking that it  is comming from the correct verifier contract 
-        assert(from_address == "" , "unauthorized contract calling handler " ) ;
+        // assert(from_address == verifier , 'unauthorized contract calling handler') ;
         // first we have correctly serialized this value fucntion into this valueFromL1 struct 
-        assert (!self.nullifierHashes.read(value.nullifierhash) , " Ticket was already used!" ) ; 
-        assert(self.ticketCommitments.read(value.commitmenthash()).used, "Ticket does not exist" ) ;
-        assert (value.isProof()  == true , "invalid Ticket") ;
+        assert(!self.nullifierHashes.read(value.nullifierhash),'Ticket was already used' ); 
+        assert(self.TicketCommitments.read(value.commitmenthash).used,'Ticket does not exist' );
+        assert(value.isProof == true ,'invalid ticket');
         // chainging the state 
-        self.nullifierHashes.write(value.nullifierhash(), true ) ; 
+        self.nullifierHashes.write(value.nullifierhash, true ); 
         // event to gave that ticket is invalidated and this event is listen by the ticket creator 
-        let _invalidate_ticketevent = inValidatedTicket {
-            Originalbuyer : self.ticketCommitments.read(value.commitmenthash()).buyer ,
-            ticketEventIndex : self.ticketCommitments.read(value.commitmenthash()).ticketEventIndex ,
-            creatorOfTicket : self.ticketEvents.read(self.ticketCommitments.read(value.commitmenthash()).ticketEventIndex).creator ,
-            commitment : value.commitmenthash() ,
-            nullifierhash : value.nullifierhash() ,
-        } ;
+        // let _invalidate_ticketevent = {
+        //     buyer : self.TicketCommitments.read(value.commitmenthash).buyer ,
+        //     ticketEventIndex : self.TicketCommitments.read(value.commitmenthash).ticketEventIndex ,
+        //     creatorOfTicket : self.ticketEvents.read(self.TicketCommitments.read(value.commitmenthash).ticketEventIndex).creator ,
+        //     commitment : value.commitmenthash ,
+        //     nullifierhash : value.nullifierhash ,
+        // } ;
         // tigerring the emit of the vent 
-        self.emit(inValidatedTicket(_invalidate_ticketevent)) ;
+        self.emit(inValidatedTicket{
+            buyer : self.TicketCommitments.read(value.commitmenthash).buyer,
+            ticketEventIndex : self.TicketCommitments.read(value.commitmenthash).ticketEventIndex,
+            creatorOfTicket : self.ticketEvents.read(self.TicketCommitments.read(value.commitmenthash).ticketEventIndex).creator,
+            commitment : value.commitmenthash,
+            nullifierhash : value.nullifierhash,
+        });
 
     }
 }
