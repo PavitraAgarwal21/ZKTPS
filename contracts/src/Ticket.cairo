@@ -1,9 +1,5 @@
 use starknet::ContractAddress ; 
-
 // implementing the l1-l2 messaging system .
-// how to implement the l1-l2 messagin system . 
-
-
 #[starknet::interface] 
 pub trait IGetTicket<TContractState> 
 {
@@ -147,7 +143,14 @@ struct inValidatedTicket {
                 noOfTicketAvl : _noOfTicket
             };
             self.ticketEvents.write(eventIndex , _ticket_event);
-            // adding that the emit of newEventTicket event 
+
+            self.emit(newTicketEvent {
+                creator : get_caller_address() ,
+                ticketEventIndex : eventIndex ,
+                eventName : _event_name ,
+                availableTickets : _noOfTicket ,
+                price : _price 
+            });
 
         } 
         fn calculateFees(self : @ContractState ,  _ticketPrice : u256  ) -> (u256 , u256)  {
@@ -239,6 +242,7 @@ pub struct valueFromL1 {
         assert(self.TicketCommitments.read(value.commitmenthash).used,'Ticket does not exist' );
         assert(value.isProof == true ,'invalid ticket');
         self.nullifierHashes.write(value.nullifierhash, true ); 
+        
         self.emit(inValidatedTicket{
             buyer : self.TicketCommitments.read(value.commitmenthash).buyer,
             ticketEventIndex : self.TicketCommitments.read(value.commitmenthash).ticketEventIndex,
