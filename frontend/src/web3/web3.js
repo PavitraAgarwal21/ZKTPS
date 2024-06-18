@@ -3,13 +3,26 @@ import { ethers } from "ethers";
 import { Proofa, Proofb, Proofc } from "../utils/packToSolidityProof";
 import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
-export const Contract_Address = "";
+import abi3 from "../abis/myAbi.json";
+export const Contract_Address =
+  "0x0301f87f63e0b50484347e52590c46f2a1e86cbd424a8c427aa0b11223557277";
 export const L1_Contract_Address = "";
 export const STRK_token_address =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 export const ETH_token_address =
   "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
 
+export const getL2contract = (account) => {
+  // const account = localStorage.getItem("account");
+  console.log(account);
+  let contract = new Contract(abi3, Contract_Address, account);
+  return contract;
+};
+export const getL2contractRead = () => {
+  const provider = getL2provider();
+  let contract = new Contract(abi3, Contract_Address, provider);
+  return contract;
+};
 export const getL2provider = () => {
   const provider = new RpcProvider({
     nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",

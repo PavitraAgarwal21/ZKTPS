@@ -1,23 +1,21 @@
 import React from "react";
-import { Contract, shortString } from "starknet";
-import { Contract_Address, getL2provider, toDecimal } from "../web3/web3";
+import { shortString } from "starknet";
+import { getL2contract, getL2provider, toDecimal } from "../web3/web3";
 
-export default function createEvent() {
+export default function CreateEvent(props) {
   async function create_event() {
-    const contract_address = Contract_Address;
-    const contract_abi = "";
-    const token_address = "";
-    const account = localStorage.getItem("account");
+    const token_address = document.querySelector("#address").value;
     const provider = getL2provider();
     let price = document.querySelector("#price").value;
     let no_of_tickets = document.querySelector("#tickets").value;
     let event_name = document.querySelector("#name").value;
     let felt_event_name = shortString.encodeShortString(event_name.toString());
-    const contract = new Contract(contract_abi, contract_address, account);
+    console.log(felt_event_name);
+    const contract = getL2contract(props.account);
     try {
       const tx = contract.createTicketEvent(
-        felt_event_name,
         price,
+        felt_event_name,
         no_of_tickets,
         token_address
       );
@@ -40,6 +38,7 @@ export default function createEvent() {
       <input type="text" placeholder="enter event name" id="name" />
       <input type="text" placeholder="enter price" id="price" />
       <input type="text" placeholder="enter number of tickets" id="tickets" />
+      <input type="text" placeholder="enter token address here" id="address" />
       <button onClick={create_event}>create</button>
     </div>
   );

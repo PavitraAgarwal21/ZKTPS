@@ -1,5 +1,7 @@
 contracts/target/
 frontend/node_modules
+contracts/.starkli-wallets
+contracts/.env
 
 layer1/node_modules
 layer/.env
