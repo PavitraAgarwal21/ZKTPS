@@ -27,6 +27,7 @@
     "@mui/material": "^5.0.0",
     "@mui/styled-engine-sc": "^5.10.6",
     "@mui/system": "^5.11.9",
+    "ethers": "^5.7.2",
     "awesome-qr": "^2.1.5-rc.0",
     "jspdf": "^2.5.1",
     "pdfjs-dist": "^4.0.269",
