@@ -1,7 +1,10 @@
-import { RpcProvider } from "starknet";
+import { Contract, RpcProvider, shortString } from "starknet";
 import { ethers } from "ethers";
 import { Proofa, Proofb, Proofc } from "../utils/packToSolidityProof";
+import abi1 from "../abis/ETHAbi.json";
+import abi2 from "../abis/STRKAbi.json";
 export const Contract_Address = "";
+export const L1_Contract_Address = "";
 export const STRK_token_address =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 export const ETH_token_address =
@@ -28,13 +31,16 @@ export async function requestAccounts(provider) {
   const accounts = await provider.send("eth_requestAccounts", []);
   return accounts[0];
 }
-export const getContract = (provider, address) => {
+export const getL1Contract = (provider, address) => {
   // const contractABI = abi.abi;
   const signer = provider.getSigner();
-  // return new ethers.Contract(address, contractABI, signer);
+  // return new ethers.Contract(L1_Contract_Address, contractABI, signer);
 };
 export function toHex(number) {
   return ethers.BigNumber.from(number)._hex;
+}
+export function toDecimal(number) {
+  return parseInt(number, 16);
 }
 export async function Invalidate(contract, proof, nullifierHash, commitment) {
   const proofA = Proofa(proof);
@@ -48,3 +54,37 @@ export async function Invalidate(contract, proof, nullifierHash, commitment) {
     commitment
   );
 }
+
+export async function approve(amount) {
+  const account = localStorage.getItem("account");
+  const contract_token = new Contract(abi1, ETH_token_address, account);
+  try {
+    const tx = await contract_token.approve(Contract_Address, amount);
+    console.log(tx);
+  } catch (error) {
+    alert(error);
+    return;
+  }
+}
+export async function connectWalletL1() {
+  try {
+    const { ethereum } = window;
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+    });
+  } catch (error) {
+    alert(error);
+  }
+}
+export const getDetails = async (event_index) => {
+  const provider = getL2provider();
+  const contract = new Contract(abi1, Contract_Address, provider);
+  try {
+    const tx = await contract.getEventDetails(event_index);
+    const event_name = shortString.decodeShortString(tx.eventName);
+    const event_price = toDecimal(tx.price);
+    return event_name;
+  } catch (error) {
+    alert(error);
+  }
+};

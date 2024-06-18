@@ -7,7 +7,8 @@ import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import {
   Invalidate,
-  getContractRead,
+  connectWalletL1,
+  getL1Contract,
   getL1Provider,
   requestAccounts,
   toHex,
@@ -177,10 +178,10 @@ async function getData(result, error, props) {
 }
 async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash) {
   try {
+    await connectWalletL1();
     const contractAddress = "";
     const provider = getL1Provider();
-    const contract = getContractRead(provider, contractAddress);
-    const address = await requestAccounts(provider);
+    const contract = getL1Contract(provider, contractAddress);
     const Proof = await generateProof(
       nullifier,
       secret,
