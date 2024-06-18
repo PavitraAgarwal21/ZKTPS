@@ -210,6 +210,8 @@ struct buyingTicket {
                 nullifierhash : commitment , 
             });
 
+            let event_creator = self.ticketEvents.read(event_index).creator;
+            let status=token.transfer(event_creator,price);
 
             }
 
@@ -307,22 +309,38 @@ assert(status==true,'transfer failed event creator');
 
 // emit event that the ticket is resaled sucessfully 
 
-
-
 }
 
+// fn refundAll(ref self : ContractState ) { 
+
+//     // HOW TO CALCULATE OF THIS IN REAL CASE SCENARIO 
+
+
+//     let event = self.ticketEvents.read(self.ticketEventIndex.read());
+//     // if the timestamp is greator then some set timestamp for that event 
+//     // assert(event.timestamp >= 24564655 , "event is not over yet");
+//     assert(event.creator == get_caller_address() , 'unauthorized person calling this function');
+// // all the ticket which is not used yet 
+    
+// let counter = 0 
+// loop {
+//     if ( self.TicketCommitments.len() <= counter ) {
+//         break ;
+// } 
+// }
 
 
 
 
-//fucntion if the event is over and the ticket is notinvalidated then refund the ticket holder the 50% of the ticket price 
+
+// //fucntion if the event is over and the ticket is notinvalidated then refund the ticket holder the 50% of the ticket price 
 
 
 
 
 
 
-    }
+//     }
 // invalidate function should be on the verfiercontract ;
 // event should emit which that the ticket is invalidated ; 
 // if this event is listen then notify the ticket creator for that ; 
@@ -335,7 +353,7 @@ assert(status==true,'transfer failed event creator');
 
 
 
-
+    }
 
     #[l1_handler]
     fn invalidateTicketL1Handler (ref self: ContractState, from_address: felt252 , nullifier1 : u128  , nullifier2 : u128, commitment1 : u128 , commitment2 :u128 ) {
@@ -368,6 +386,8 @@ assert(status==true,'transfer failed event creator');
 
         // if all this is sucessfull then transfer the token to the creator of the event  
 
+        // transferring the token to the creator of the event 
+
 
 
 
@@ -378,6 +398,11 @@ assert(status==true,'transfer failed event creator');
             commitment : commitmenthash,
             nullifierhash : nullifierhash,
         });
-
     }
+
+    // making  the refund to all the ticket holder and event creator once event is over 
+    
+
+
+
 }
