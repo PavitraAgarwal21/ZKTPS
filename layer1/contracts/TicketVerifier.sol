@@ -13,22 +13,21 @@ contract TicketVerifier
             _snMessaging = IStarknetMessaging(starknetCore); 
             _verifierContract = IVerifier(_verifierAddress) ;
         }
-
-function InvalidateTicket(uint[2] calldata  _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[2] calldata _pubSignals , uint256 selector , uint256 contractAddress  ) external payable    {
-
-require(_verifierContract.verifyProof(_pA ,_pB , _pC , _pubSignals ) ,  "invalid prove  ") ;
-
-
-uint256[] memory payload = new uint256[](4);
-        payload[0] = uint128(_pubSignals[0]) ;
-        payload[1] = uint128(_pubSignals[0] >>128) ; 
-        payload[2] = uint128(_pubSignals[1]);
-        payload[3] = uint128(_pubSignals[1]>>128 );
+        
+function invalidateTicket(uint256[2] calldata _pA, uint256[2][2] calldata _pB, uint256[2] calldata _pC, bytes32 _nullifierHash, bytes32 _commitment,uint256 contractAddress,
+        uint256 selector)external payable{ 
+    bool success=_verifierContract.verifyProof(_pA, _pB, _pC, [uint256(_nullifierHash),uint256(_commitment)]);
+    require(success,"Invalid Proof");    
+       uint256[] memory payload = new uint256[](4);
+        payload[0] = uint128(uint256(_nullifierHash)) ;
+        payload[1] = uint128(uint256(_nullifierHash) >>128) ; 
+        payload[2] = uint128(uint256(_commitment));
+        payload[3] = uint128(uint256(_commitment)>>128 );
 
          _snMessaging.sendMessageToL2{value: msg.value}(
             contractAddress,
             selector,
             payload 
         );
-}
+    }
 }

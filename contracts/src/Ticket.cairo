@@ -15,7 +15,6 @@ pub trait IGetTicket<TContractState>
         _commitment : u256 ,
         _nullifierhash : u256
     ) -> bool ;
-
 }
 #[starknet::interface]
 trait IERC20<TContractState> {
@@ -57,7 +56,7 @@ mod Ticket {
     verifier : ContractAddress , 
     ticketEvents : LegacyMap::<u128 , TicketEvent> ,
     TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
-    nullifierHashes : LegacyMap::<u256 , bool>  
+    nullifierHashes : LegacyMap::<u256 , bool>  ,
     }
 
     #[constructor]
@@ -184,6 +183,8 @@ struct inValidatedTicket {
                 ..self.ticketEvents.read(event_index),
             });
 
+            // token transfer is pending . 
+
             }
 
         fn verifyTicket( self : @ContractState,  
@@ -200,10 +201,7 @@ struct inValidatedTicket {
             }
             return true ;  
         }
-
-
     }
-
 // invalidate function should be on the verfiercontract ;
 // event should emit which that the ticket is invalidated ; 
 // if this event is listen then notify the ticket creator for that ; 
@@ -212,43 +210,40 @@ struct inValidatedTicket {
 // public intputs and true/ false 
 // the nullifier hash 
 // the commitment hash 
-#[derive(Drop, Serde , starknet::Store)] 
-pub struct valueFromL1 {
-    isProof : bool ,
-    commitmenthash : u256 ,
-    nullifierhash :  u256 
-}
+
+
+
     #[l1_handler]
-    fn invalidateTicketL1Handler (ref self: ContractState, from_address:felt252, value : valueFromL1 ) {
+    fn invalidateTicketL1Handler (ref self: ContractState, from_address: felt252 , nullifier1 : u128  , nullifier2 : u128, commitment1 : u128 , commitment2 :u128 ) {
+    
 
-        // value comming from the l1 contract should be convert into the type of 
-        // pub struct valueFromL1 {
-        //     isProof : bool ,
-        //     commitmenthash : felt252 ,
-        //     nullifierhash :  felt252 
-
-        // }
-       let  value = valueFromL1 {
-                isProof : true,
-           commitmenthash : 1223,
-           nullifierhash :  12321 
-          }; 
 
         // let verifier=self.verifier.read();
         // contract address checking that it  is comming from the correct verifier contract 
         // assert(from_address == verifier , 'unauthorized contract calling handler') ;
         // first we have correctly serialized this value fucntion into this valueFromL1 struct 
-        assert(!self.nullifierHashes.read(value.nullifierhash),'Ticket was already used' ); 
-        assert(self.TicketCommitments.read(value.commitmenthash).used,'Ticket does not exist' );
-        assert(value.isProof == true ,'invalid ticket');
-        self.nullifierHashes.write(value.nullifierhash, true ); 
+            // assert(from_address == self.l1Address.read() ,'unauthorized contract calling handler') ; 
+
+            let nullifierhash = u256{
+                low : nullifier1,
+                high : nullifier2
+            };
+
+            let commitmenthash = u256{
+                low : commitment1,
+                high : commitment2
+            };
+
+        assert(!self.nullifierHashes.read(nullifierhash),'Ticket was already used' ); 
+        assert(self.TicketCommitments.read(commitmenthash).used,'Ticket does not exist' );
+        self.nullifierHashes.write(nullifierhash, true ); 
         
         self.emit(inValidatedTicket{
-            buyer : self.TicketCommitments.read(value.commitmenthash).buyer,
-            ticketEventIndex : self.TicketCommitments.read(value.commitmenthash).ticketEventIndex,
-            creatorOfTicket : self.ticketEvents.read(self.TicketCommitments.read(value.commitmenthash).ticketEventIndex).creator,
-            commitment : value.commitmenthash,
-            nullifierhash : value.nullifierhash,
+            buyer : self.TicketCommitments.read(commitmenthash).buyer,
+            ticketEventIndex : self.TicketCommitments.read(commitmenthash).ticketEventIndex,
+            creatorOfTicket : self.ticketEvents.read(self.TicketCommitments.read(commitmenthash).ticketEventIndex).creator,
+            commitment : commitmenthash,
+            nullifierhash : nullifierhash,
         });
 
     }
