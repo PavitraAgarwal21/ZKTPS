@@ -183,9 +183,8 @@ async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash) {
     const address = await requestAccounts(provider);
     const Proof = await generateProof(
       nullifier,
-      nullifierHash,
-      address,
       secret,
+      nullifierHash,
       commitmentHash
     );
     try {
@@ -193,8 +192,7 @@ async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash) {
         contract,
         Proof,
         toHex(nullifierHash),
-        toHex(commitmentHash),
-        address
+        toHex(commitmentHash)
       );
     } catch (error) {
       alert(error.reason);

@@ -36,19 +36,15 @@ export const getContract = (provider, address) => {
 export function toHex(number) {
   return ethers.BigNumber.from(number)._hex;
 }
-export async function Invalidate(
-  contract,
-  proof,
-  nullifierHash,
-  commitment,
-  recipient
-) {
+export async function Invalidate(contract, proof, nullifierHash, commitment) {
   const proofA = Proofa(proof);
   const proofB = Proofb(proof);
   const proofC = Proofc(proof);
-  return await contract.InvalidateTicket(proofA, proofB, proofC, [
+  return await contract.InvalidateTicket(
+    proofA,
+    proofB,
+    proofC,
     nullifierHash,
-    commitment,
-    recipient,
-  ]);
+    commitment
+  );
 }
