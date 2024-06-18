@@ -3,6 +3,7 @@ import { Contract, RpcProvider } from "starknet";
 import random from "../utils/random";
 import { commitmentHash, nullifierHash } from "../utils/createHash";
 import bigInt from "big-integer";
+import { toHex } from "../web3/web3";
 
 export default function buyTicket() {
   const abi1 = "";
@@ -41,12 +42,6 @@ export default function buyTicket() {
     } catch (error) {
       alert(error);
     }
-  }
-
-  function toHex(number) {
-    const bigIntNumber = bigInt(number);
-    const hexString = bigIntNumber.toString(16);
-    return "0x" + hexString;
   }
   return <div>buyTicket</div>;
 }
