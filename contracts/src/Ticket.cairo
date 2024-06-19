@@ -5,7 +5,7 @@ pub trait IGetTicket<TContractState>
 {
     fn getContractOwner(self: @TContractState) -> ContractAddress ;  
     fn getTicketEventIndex(self: @TContractState) -> u128 ; 
-    fn getVerifier(self: @TContractState) -> ContractAddress ;   
+    fn getVerifier(self: @TContractState) -> felt252 ;   
     fn getEventdetails(self : @TContractState , _ticketEventIndex : u128) -> Ticket::TicketEvent ; 
     fn createTicketEvent(ref self : TContractState , _price : u256 , _event_name : felt252 , _noOfTicket : u128 , _customToken: ContractAddress )  ;
     fn buyTicket(ref self : TContractState , event_index : u128 , commitment : u256 , token_address:ContractAddress ) ;
@@ -55,14 +55,14 @@ mod Ticket {
     {
     contractOwner : ContractAddress ,
     ticketEventIndex :u128 ,
-    verifier : ContractAddress , 
+    verifier : felt252 , 
     ticketEvents : LegacyMap::<u128 , TicketEvent> ,
     TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
     nullifierHashes : LegacyMap::<u256 , bool>  ,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState , _verifier : ContractAddress) {
+    fn constructor(ref self: ContractState , _verifier : felt252) {
         self.verifier.write(_verifier);
         self.contractOwner.write(get_caller_address());
         self.ticketEventIndex.write(0); 
@@ -138,7 +138,7 @@ struct buyingTicket {
         fn getTicketEventIndex(self: @ContractState) -> u128 {
             self.ticketEventIndex.read() 
         }
-        fn getVerifier(self: @ContractState) -> ContractAddress {
+        fn getVerifier(self: @ContractState) -> felt252 {
             self.verifier.read() 
         }
         fn getEventdetails(self : @ContractState , _ticketEventIndex : u128) -> TicketEvent {
@@ -359,9 +359,9 @@ assert(status==true,'transfer failed event creator');
     fn invalidateTicketL1Handler (ref self: ContractState, from_address: felt252 , nullifier1 : u128  , nullifier2 : u128, commitment1 : u128 , commitment2 :u128 ) {
     
 
-        // let verifier=self.verifier.read();
+        let verifier=self.verifier.read();
         // contract address checking that it  is comming from the correct verifier contract 
-        // assert(from_address == verifier , 'unauthorized contract calling handler') ;
+        assert(from_address == verifier , 'unauthorized contract calling handler') ;
         // first we have correctly serialized this value fucntion into this valueFromL1 struct 
             // assert(from_address == self.l1Address.read() ,'unauthorized contract calling handler') ; 
 
