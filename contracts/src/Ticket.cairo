@@ -4,11 +4,10 @@ use starknet::ContractAddress ;
 pub trait IGetTicket<TContractState> 
 {
     fn getContractOwner(self: @TContractState) -> ContractAddress ;  
-    fn getTicketEventIndex(self: @TContractState) -> u128 ; 
     fn getVerifier(self: @TContractState) -> felt252 ;   
-    fn getEventdetails(self : @TContractState , _ticketEventIndex : u128) -> Ticket::TicketEvent ; 
-    fn createTicketEvent(ref self : TContractState , _price : u256 , _event_name : felt252 , _noOfTicket : u128 , _customToken: ContractAddress )  ;
-    fn buyTicket(ref self : TContractState , event_index : u128 , commitment : u256 , token_address:ContractAddress ) ;
+    fn getEventdetails(self : @TContractState , _ticketEventIndex : u256) -> Ticket::TicketEvent ; 
+    fn createTicketEvent(ref self : TContractState ,event_id : u256,_price : u256 , _event_name : felt252 , _noOfTicket : u128 , _customToken: ContractAddress )  ;
+    fn buyTicket(ref self : TContractState , event_index : u256 , commitment : u256 , token_address:ContractAddress ) ;
     fn calculateFees(self : @TContractState ,  _ticketPrice : u256  ) -> (u256 , u256)  ;
     fn getTicket(self : @TContractState , _commitment : u256 ) -> Ticket::TicketCommitment ;
     fn verifyTicket(self : @TContractState,  
@@ -54,9 +53,8 @@ mod Ticket {
     struct Storage 
     {
     contractOwner : ContractAddress ,
-    ticketEventIndex :u128 ,
     verifier : felt252 , 
-    ticketEvents : LegacyMap::<u128 , TicketEvent> ,
+    ticketEvents : LegacyMap::<u256 , TicketEvent> ,
     TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
     nullifierHashes : LegacyMap::<u256 , bool>  ,
     }
@@ -65,7 +63,6 @@ mod Ticket {
     fn constructor(ref self: ContractState , _verifier : felt252) {
         self.verifier.write(_verifier);
         self.contractOwner.write(get_caller_address());
-        self.ticketEventIndex.write(0); 
     }
 
     #[derive(Drop, Serde , starknet::Store)] 
@@ -79,7 +76,7 @@ mod Ticket {
     #[derive(Drop, Serde , starknet::Store)] 
     pub struct TicketCommitment {
         buyer : ContractAddress ,
-        ticketEventIndex : u128 ,
+        ticketEventIndex : u256 ,
         used : bool ,
         resale : bool ,
 
@@ -99,14 +96,14 @@ enum Event {
 struct newTicketEvent { 
     #[key]
     creator : ContractAddress ,
-    ticketEventIndex : u128 ,
+    ticketEventIndex : u256 ,
 }
 
 #[derive(Drop , Serde , starknet::Event)] 
 struct inValidatedTicket { 
     #[key]
     buyer : ContractAddress ,
-    ticketEventIndex : u128 ,
+    ticketEventIndex : u256 ,
     creatorOfTicket : ContractAddress ,
     commitment  : u256 ,
     nullifierhash : u256 , 
@@ -116,7 +113,7 @@ struct inValidatedTicket {
 struct buyingTicket { 
     #[key]
     buyer : ContractAddress ,
-    ticketEventIndex : u128 ,
+    ticketEventIndex : u256 ,
     creatorOfTicket : ContractAddress ,
     commitment  : u256 ,
     nullifierhash : u256 , 
@@ -132,23 +129,19 @@ struct buyingTicket {
         fn getContractOwner(self: @ContractState) -> ContractAddress {
             self.contractOwner.read() 
         }
-        fn getTicketEventIndex(self: @ContractState) -> u128 {
-            self.ticketEventIndex.read() 
-        }
         fn getVerifier(self: @ContractState) -> felt252 {
             self.verifier.read() 
         }
-        fn getEventdetails(self : @ContractState , _ticketEventIndex : u128) -> TicketEvent {
+        fn getEventdetails(self : @ContractState , _ticketEventIndex : u256) -> TicketEvent {
             self.ticketEvents.read(_ticketEventIndex) 
         }
         fn getTicket(self : @ContractState , _commitment : u256 ) -> TicketCommitment {
             self.TicketCommitments.read(_commitment) 
         }
-         fn createTicketEvent(ref self : ContractState , _price : u256 , _event_name : felt252 , _noOfTicket : u128  , _customToken: ContractAddress)  
+         fn createTicketEvent(ref self : ContractState ,event_id : u256, _price : u256 , _event_name : felt252 , _noOfTicket : u128  , _customToken: ContractAddress)  
         {
             // updating ticket event index 
-            let eventIndex = self.ticketEventIndex.read() + 1 ;
-            self.ticketEventIndex.write(eventIndex);
+            let eventIndex = event_id;
             let _ticket_event = TicketEvent {
                 creator : get_caller_address() ,
                 price : _price ,
@@ -169,7 +162,7 @@ struct buyingTicket {
             let total = fees + _ticketPrice ; 
             (fees , total ) 
         } 
-        fn buyTicket(ref self : ContractState , event_index : u128 , commitment : u256 , token_address:ContractAddress ) {
+        fn buyTicket(ref self : ContractState , event_index : u256 , commitment : u256 , token_address:ContractAddress ) {
 
             let token=IERC20Dispatcher{contract_address:token_address};
             let contract_address=get_contract_address();
