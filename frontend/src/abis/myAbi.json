@@ -68,7 +68,7 @@
       },
       {
         "name": "ticketEventIndex",
-        "type": "core::integer::u128"
+        "type": "core::integer::u256"
       },
       {
         "name": "used",
@@ -97,17 +97,6 @@
       },
       {
         "type": "function",
-        "name": "getTicketEventIndex",
-        "inputs": [],
-        "outputs": [
-          {
-            "type": "core::integer::u128"
-          }
-        ],
-        "state_mutability": "view"
-      },
-      {
-        "type": "function",
         "name": "getVerifier",
         "inputs": [],
         "outputs": [
@@ -123,7 +112,7 @@
         "inputs": [
           {
             "name": "_ticketEventIndex",
-            "type": "core::integer::u128"
+            "type": "core::integer::u256"
           }
         ],
         "outputs": [
@@ -137,6 +126,10 @@
         "type": "function",
         "name": "createTicketEvent",
         "inputs": [
+          {
+            "name": "event_id",
+            "type": "core::integer::u256"
+          },
           {
             "name": "_price",
             "type": "core::integer::u256"
@@ -163,7 +156,7 @@
         "inputs": [
           {
             "name": "event_index",
-            "type": "core::integer::u128"
+            "type": "core::integer::u256"
           },
           {
             "name": "commitment",
@@ -317,7 +310,7 @@
       },
       {
         "name": "ticketEventIndex",
-        "type": "core::integer::u128",
+        "type": "core::integer::u256",
         "kind": "data"
       }
     ]
@@ -334,7 +327,7 @@
       },
       {
         "name": "ticketEventIndex",
-        "type": "core::integer::u128",
+        "type": "core::integer::u256",
         "kind": "data"
       },
       {
@@ -366,7 +359,7 @@
       },
       {
         "name": "ticketEventIndex",
-        "type": "core::integer::u128",
+        "type": "core::integer::u256",
         "kind": "data"
       },
       {

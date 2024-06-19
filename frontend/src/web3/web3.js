@@ -5,7 +5,7 @@ import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
 import abi3 from "../abis/myAbi.json";
 export const Contract_Address =
-  "0x05abe5114de127e0ceec5322493b929da484af4af5a183e7bba3e79b03852913";
+  "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
 export const L1_Contract_Address = "";
 export const STRK_token_address =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";

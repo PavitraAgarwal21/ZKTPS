@@ -1,11 +1,12 @@
-import React from "react";
 import { shortString } from "starknet";
 import { getL2contract, getL2provider, toDecimal } from "../web3/web3";
+import random from "../utils/random";
 
 export default function CreateEvent(props) {
   async function create_event() {
     const token_address = document.querySelector("#address").value;
     const provider = getL2provider();
+    let event_index = random();
     let price = document.querySelector("#price").value;
     let no_of_tickets = document.querySelector("#tickets").value;
     let event_name = document.querySelector("#name").value;
@@ -15,6 +16,7 @@ export default function CreateEvent(props) {
     console.log(contract);
     try {
       const tx = await contract.createTicketEvent(
+        event_index,
         price,
         felt_event_name,
         no_of_tickets,
@@ -22,17 +24,11 @@ export default function CreateEvent(props) {
       );
       console.log(tx);
       const transactionHash = tx.transaction_hash;
+      console.log(transactionHash);
       const txReceipt = await provider.waitForTransaction(transactionHash);
       console.log(txReceipt);
       const listEvents = txReceipt.events;
       console.log(listEvents);
-      console.log(listEvents[2].keys[1]);
-      const event_index = toDecimal(listEvents[2].data[0]);
-      const event_price = toDecimal(listEvents[2].data[3]);
-      localStorage.setItem("eventIndex", event_index);
-      localStorage.setItem("eventName", event_name);
-      localStorage.setItem("eventPrice", event_price);
-      console.log(event_index);
     } catch (error) {
       alert(error);
     }
