@@ -361,7 +361,7 @@ assert(status==true,'transfer failed event creator');
 
         let verifier=self.verifier.read();
         // contract address checking that it  is comming from the correct verifier contract 
-        assert(from_address == verifier , 'unauthorized contract calling handler') ;
+        assert(from_address == verifier ,'unauthorized caller') ;
         // first we have correctly serialized this value fucntion into this valueFromL1 struct 
             // assert(from_address == self.l1Address.read() ,'unauthorized contract calling handler') ; 
 
