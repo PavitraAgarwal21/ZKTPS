@@ -38,7 +38,7 @@ template Ticket () {
 hasher.commitmenthash ===  commitmenthash ; 
 hasher.nullifierhash === nullifierhash ; 
 
-// so that only the proof creator can able to submit the proof 
+// so that only the proof creator can able to submit the proof r
 recipientSquare <== recipient * recipient;
     
     
