@@ -1,5 +1,6 @@
 pragma circom 2.1.9 ;
-include "../node_modules/circomlib/circuits/poseidon.circom";
+include "node_modules/circomlib/circuits/poseidon.circom";
+
 template Hasher() {
     // generating the nullifierhash and commitmenthash 
     signal input nullifier ; 
@@ -17,6 +18,7 @@ template Hasher() {
 
     nullifierhash <== nullifierHasher.out ; 
 
+
  }
 
 template Ticket () {
@@ -24,7 +26,9 @@ template Ticket () {
     signal input  secret ; 
     signal input nullifierhash ;
     signal input commitmenthash ;  
+   signal input recipient ; 
 
+   signal recipientSquare;
 
     component hasher = Hasher() ;     
     hasher.nullifier <== nullifier ;
@@ -33,7 +37,10 @@ template Ticket () {
 
 hasher.commitmenthash ===  commitmenthash ; 
 hasher.nullifierhash === nullifierhash ; 
+
+// so that only the proof creator can able to submit the proof 
+recipientSquare <== recipient * recipient;
     
     
 }
-component main {public [nullifierhash, commitmenthash]} = Ticket();
+component main {public [nullifierhash, commitmenthash, recipient ]} = Ticket();
