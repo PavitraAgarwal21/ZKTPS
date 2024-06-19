@@ -14,6 +14,7 @@ import {
   toHex,
 } from "../web3/web3";
 import { useState } from "react";
+import { on } from "process";
 
 /**
  * @typedef {Object} QRReaderProps
@@ -26,6 +27,8 @@ import { useState } from "react";
 /**
  * @param {QRReaderProps} props
  */
+
+
 const QRReader = (props) => {
   const facingMode = isMobile ? "environment" : "user";
   return (
@@ -159,7 +162,8 @@ export const ViewFinder = () => (
     </svg>
   </>
 );
-async function getData(result, error, props) {
+// taking the recipient from the calling one 
+async function getData(result, error, props , recipient) {
   if (!!result) {
     alert("Qr Scanned Successful");
     props.handleClose();
@@ -170,13 +174,15 @@ async function getData(result, error, props) {
       const secret = parseInt(values[1]);
       const nullifierHash = values[2];
       const commitmentHash = values[3];
-      await verifyTicket(nullifier, secret, nullifierHash, commitmentHash);
+      // how we get the values of the recipient from the one who is calling the function , 
+      // so we what to know the address of recipient which is the one who is calling the function 
+      await verifyTicket(nullifier, secret, nullifierHash, commitmentHash , recipient );
     } catch (error) {
       console.log(error);
     }
   }
 }
-async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash) {
+async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash,recipient) {
   try {
     await connectWalletL1();
     const contractAddress = "";
@@ -186,14 +192,17 @@ async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash) {
       nullifier,
       secret,
       nullifierHash,
-      commitmentHash
+      commitmentHash,
+      recipient,
+
     );
     try {
       const transaction = await Invalidate(
         contract,
         Proof,
         toHex(nullifierHash),
-        toHex(commitmentHash)
+        toHex(commitmentHash),
+        recipient  // is already given in the hex format 
       );
     } catch (error) {
       alert(error.reason);
