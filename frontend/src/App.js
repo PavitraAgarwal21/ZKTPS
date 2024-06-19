@@ -1,15 +1,21 @@
 import { useState } from "react";
 import "./App.css";
-import { connect } from "@argent/get-starknet";
+import { connect } from "starknetkit";
 // import BuyTicket from "./components/buyTicket";
 import CreateEvent from "./components/createEvent";
+import { RpcProvider } from "starknet";
 function App() {
   const [account, setAccount] = useState(null);
   async function connectWalletL2() {
-    const connection = await connect({ dappName: "ZKTPS" });
-    if (connection && connection.account) {
-      setAccount(connection.account);
-      localStorage.setItem("account", connection.account);
+    const { wallet } = await connect({
+      provider: new RpcProvider({
+        nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
+      }),
+      dappName: "ZKTPS",
+    });
+    if (wallet && wallet.isConnected) {
+      setAccount(wallet.account);
+      localStorage.setItem("account", wallet.account);
     }
   }
   return (

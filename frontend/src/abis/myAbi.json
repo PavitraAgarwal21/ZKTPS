@@ -112,7 +112,7 @@
         "inputs": [],
         "outputs": [
           {
-            "type": "core::starknet::contract_address::ContractAddress"
+            "type": "core::felt252"
           }
         ],
         "state_mutability": "view"
@@ -273,7 +273,7 @@
     "inputs": [
       {
         "name": "_verifier",
-        "type": "core::starknet::contract_address::ContractAddress"
+        "type": "core::felt252"
       }
     ]
   },
@@ -318,21 +318,6 @@
       {
         "name": "ticketEventIndex",
         "type": "core::integer::u128",
-        "kind": "data"
-      },
-      {
-        "name": "eventName",
-        "type": "core::felt252",
-        "kind": "data"
-      },
-      {
-        "name": "availableTickets",
-        "type": "core::integer::u128",
-        "kind": "data"
-      },
-      {
-        "name": "price",
-        "type": "core::integer::u256",
         "kind": "data"
       }
     ]

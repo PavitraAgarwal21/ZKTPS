@@ -12,16 +12,20 @@ export default function CreateEvent(props) {
     let felt_event_name = shortString.encodeShortString(event_name.toString());
     console.log(felt_event_name);
     const contract = getL2contract(props.account);
+    console.log(contract);
     try {
-      const tx = contract.createTicketEvent(
+      const tx = await contract.createTicketEvent(
         price,
         felt_event_name,
         no_of_tickets,
         token_address
       );
+      console.log(tx);
       const transactionHash = tx.transaction_hash;
       const txReceipt = await provider.waitForTransaction(transactionHash);
+      console.log(txReceipt);
       const listEvents = txReceipt.events;
+      console.log(listEvents);
       console.log(listEvents[2].keys[1]);
       const event_index = toDecimal(listEvents[2].data[0]);
       const event_price = toDecimal(listEvents[2].data[3]);
