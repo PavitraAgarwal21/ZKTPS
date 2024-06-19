@@ -68,8 +68,7 @@ export async function Invalidate(contract, proof, nullifierHash, commitment) {
   );
 }
 
-export async function approve(amount) {
-  const account = localStorage.getItem("account");
+export async function approve(account, amount) {
   const contract_token = new Contract(abi1, ETH_token_address, account);
   try {
     const tx = await contract_token.approve(Contract_Address, amount);

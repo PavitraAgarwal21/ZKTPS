@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { connect } from "starknetkit";
-// import BuyTicket from "./components/buyTicket";
+import BuyTicket from "./components/buyTicket";
 import CreateEvent from "./components/createEvent";
 import { RpcProvider } from "starknet";
 function App() {
@@ -21,7 +21,7 @@ function App() {
   return (
     <div>
       <button onClick={connectWalletL2}>connect</button>
-      {/* <BuyTicket /> */}
+      <BuyTicket account={account} />
       <CreateEvent account={account} />
     </div>
   );
