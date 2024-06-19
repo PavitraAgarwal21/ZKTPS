@@ -100,9 +100,6 @@ struct newTicketEvent {
     #[key]
     creator : ContractAddress ,
     ticketEventIndex : u128 ,
-    eventName : felt252 , 
-    availableTickets : u128 ,
-    price   : u256 
 }
 
 #[derive(Drop , Serde , starknet::Event)] 
@@ -158,16 +155,12 @@ struct buyingTicket {
                 eventName : _event_name ,
                 noOfTicketAvl : _noOfTicket,
                 customToken : _customToken  , 
-
             };
             self.ticketEvents.write(eventIndex , _ticket_event);
 
-            self.emit(newTicketEvent {
+            self.emit(newTicketEvent{
                 creator : get_caller_address() ,
                 ticketEventIndex : eventIndex ,
-                eventName : _event_name ,
-                availableTickets : _noOfTicket ,
-                price : _price 
             });
 
         } 
@@ -212,7 +205,7 @@ struct buyingTicket {
 
             let event_creator = self.ticketEvents.read(event_index).creator;
             let status=token.transfer(event_creator,price);
-
+            assert(status==true,'invalid');
             }
 
         fn verifyTicket( self : @ContractState,  
