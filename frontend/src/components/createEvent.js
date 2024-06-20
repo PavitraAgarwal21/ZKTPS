@@ -102,8 +102,8 @@ export default function CreateEvent(props) {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        overlayClassName="modal-overlay"
-        className="modal-content"
+        overlayClassName="modal-overlay_custom"
+        className="modal-content_custom"
         style={customStyles}
         contentLabel="Create Event Modal"
       >

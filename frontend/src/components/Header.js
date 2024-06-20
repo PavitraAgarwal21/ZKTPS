@@ -35,7 +35,7 @@ const Header = () => {
       }
     };
     connect();
-  }, []);
+  }, [account]);
 
   return (
     <nav className="navbar navbar-expand-lg sticky-top navbar-dark text-bg-dark shadow">
