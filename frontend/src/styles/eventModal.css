@@ -1,0 +1,62 @@
+/* CreateEventModal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content form div {
+  margin-bottom: 1rem;
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-content button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-content .create-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-content .cancel-button {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 0.5rem;
+}
