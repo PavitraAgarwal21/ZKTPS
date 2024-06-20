@@ -4,6 +4,7 @@ import { Proofa, Proofb, Proofc } from "../utils/packToSolidityProof";
 import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
 import abi3 from "../abis/myAbi.json";
+import TicketVerifierABI from "../abis/TicketVerifierABI.json";
 export const Contract_Address =
   "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
 export const L1_Contract_Address = "";
@@ -11,7 +12,6 @@ export const STRK_token_address =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 export const ETH_token_address =
   "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
-
 export const getL2contract = (account) => {
   // const account = localStorage.getItem("account");
   console.log(account);
@@ -45,9 +45,9 @@ export async function requestAccounts(provider) {
   return accounts[0];
 }
 export const getL1Contract = (provider, address) => {
-  // const contractABI = abi.abi;
+  
   const signer = provider.getSigner();
-  // return new ethers.Contract(L1_Contract_Address, contractABI, signer);
+return new ethers.Contract(address, TicketVerifierABI, signer);
 };
 export function toHex(number) {
   return ethers.BigNumber.from(number)._hex;
@@ -55,7 +55,7 @@ export function toHex(number) {
 export function toDecimal(number) {
   return parseInt(number, 16);
 }
-export async function Invalidate(contract, proof, nullifierHash, commitment) {
+export async function Invalidate(contract, proof, nullifierHash, commitment,recipient) {
   const proofA = Proofa(proof);
   const proofB = Proofb(proof);
   const proofC = Proofc(proof);
@@ -64,7 +64,8 @@ export async function Invalidate(contract, proof, nullifierHash, commitment) {
     proofB,
     proofC,
     nullifierHash,
-    commitment
+    commitment,
+    recipient 
   );
 }
 

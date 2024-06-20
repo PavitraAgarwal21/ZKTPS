@@ -1,0 +1,92 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "starknetCore",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_verifierAddress",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "_snMessaging",
+		"outputs": [
+			{
+				"internalType": "contract IStarknetMessaging",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "_verifierContract",
+		"outputs": [
+			{
+				"internalType": "contract IVerifier",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[2]",
+				"name": "_pA",
+				"type": "uint256[2]"
+			},
+			{
+				"internalType": "uint256[2][2]",
+				"name": "_pB",
+				"type": "uint256[2][2]"
+			},
+			{
+				"internalType": "uint256[2]",
+				"name": "_pC",
+				"type": "uint256[2]"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_nullifierHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_commitment",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "contractAddress",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "selector",
+				"type": "uint256"
+			}
+		],
+		"name": "invalidateTicket",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	}
+]
