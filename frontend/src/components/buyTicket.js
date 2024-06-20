@@ -1,38 +1,31 @@
 import { useEffect, useState } from "react";
-import { Contract, RpcProvider } from "starknet";
 import random from "../utils/random";
 import { commitmentHash, nullifierHash } from "../utils/createHash";
 import {
-  Contract_Address,
   approve,
   getDetails,
   getL2contract,
+  get_token_name,
   toHex,
 } from "../web3/web3";
 import { CreateTicketQR } from "../utils/createTicketQR";
 import { downloadTicket } from "../utils/downloadTicket";
-
+import { useParams } from "react-router-dom";
 function BuyTicket(props) {
   const [ticketDetails, setTicketDetails] = useState(null);
   const [price, setPrice] = useState(null);
-  const abi1 = "";
   const account = props.account;
+  const { event_index } = useParams();
   const token_address =
     "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
 
-  // useEffect(() => {
-  //   const event_name = getDetails();
-  //   downloadTicket(ticketDetails, price, event_name);
-  // }, [ticketDetails]);
   async function buy_ticket() {
-    const provider = new RpcProvider({
-      nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
-    });
-    const amount = 1000;
+    const { event_price, event_name } = await getDetails(event_index);
+    const amount = event_price;
+    console.log(event_price);
     setPrice(amount);
-    const event_index = 1;
-    // await approve(account, amount);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await approve(account, amount);
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     const secret = random();
     const nullifier = random();
     const commitment_hash = commitmentHash(
@@ -48,9 +41,10 @@ function BuyTicket(props) {
         hex_commitment_hash,
         token_address
       );
-      const noteString = `${nullifier},${secret},${nullifier_hash},${commitment_hash},${amount},${token_address}`;
+      const noteString = `${nullifier},${secret},${nullifier_hash},${commitment_hash},${event_index},${amount},${token_address}`;
       const qrDataURL = await CreateTicketQR(noteString);
-      downloadTicket(qrDataURL, price, "hi there");
+      const token_name = get_token_name(token_address);
+      downloadTicket(qrDataURL, price, token_name, event_name);
       setTicketDetails(qrDataURL);
     } catch (error) {
       alert(error);

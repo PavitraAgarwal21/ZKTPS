@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import { connect } from "starknetkit";
-import BuyTicket from "./components/buyTicket";
 import CreateEvent from "./components/createEvent";
 import { RpcProvider } from "starknet";
+import Router from "./routes/Router";
 function App() {
   const [account, setAccount] = useState(null);
   async function connectWalletL2() {
@@ -21,8 +21,7 @@ function App() {
   return (
     <div>
       <button onClick={connectWalletL2}>connect</button>
-      <BuyTicket account={account} />
-      <CreateEvent account={account} />
+      <Router account={account} />
     </div>
   );
 }

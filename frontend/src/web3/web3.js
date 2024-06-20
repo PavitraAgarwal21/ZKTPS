@@ -89,14 +89,26 @@ export async function connectWalletL1() {
   }
 }
 export const getDetails = async (event_index) => {
-  const provider = getL2provider();
-  const contract = new Contract(abi1, Contract_Address, provider);
+  const contract = getL2contractRead();
   try {
-    const tx = await contract.getEventDetails(event_index);
+    const tx = await contract.getEventdetails(event_index);
     const event_name = shortString.decodeShortString(tx.eventName);
-    const event_price = toDecimal(tx.price);
-    return event_name;
+    const event_price = tx.price;
+    return { event_price, event_name };
   } catch (error) {
     alert(error);
+  }
+};
+export const get_token_name = (address) => {
+  if (
+    address ==
+    "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+  ) {
+    return "STRK";
+  } else if (
+    address ==
+    "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7"
+  ) {
+    return "ETH";
   }
 };

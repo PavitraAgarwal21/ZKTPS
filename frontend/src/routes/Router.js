@@ -1,9 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import App from "../App";
-const Router = () => {
+import BuyTicket from "../components/buyTicket";
+import CreateEvent from "../components/createEvent";
+const Router = (props) => {
   return (
     <Routes>
-      <Route path="/" element={App} />
+      <Route path="/" element={<CreateEvent account={props.account} />} />
+      <Route
+        path="/home/:event_index"
+        element={<BuyTicket account={props.account} />}
+      />
     </Routes>
   );
 };
