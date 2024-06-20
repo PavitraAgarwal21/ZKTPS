@@ -201,7 +201,7 @@ struct buyingTicket {
             assert(status==true,'invalid');
             }
 
-        fn verifyTicket( self : @ContractState,  
+fn verifyTicket( self : @ContractState,  
             _commitment : u256 ,
             _nullifierhash : u256
         ) -> bool {
@@ -280,6 +280,7 @@ let new_ticket_commitment  = TicketCommitment {
     used : true  ,
     resale : false 
 };
+
 
 self.TicketCommitments.write(newCommitment , new_ticket_commitment);
 

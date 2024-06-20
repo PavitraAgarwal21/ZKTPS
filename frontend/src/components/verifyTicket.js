@@ -194,13 +194,8 @@ async function verifyTicket(props,nullifierHash, commitmentHash) {
     // connect the l2 wallet and get their contract address 
 
 
-    const provider = getL2provider();
+  
     const contract = getL2contractRead(); 
-
-    console.log(provider);
-    // console.log(getContract);
-    console.log(nullifierHash);
-    console.log(commitmentHash); 
 
 
 
@@ -234,37 +229,6 @@ try {
     console.log(error);
   }
 
-
-
-    // const contract = getL1Contract(provider, contractAddress);
-    // console.log(contract);
-    // console.log(nullifier);
-    // console.log(secret);
-   
-    // console.log(recipient);
-
-    // const Proof = await generateProof(
-    //   nullifier,
-    //   secret,
-    //   nullifierHash,
-    //   commitmentHash,
-    //   recipient,
-    // );
-    // console.log(Proof);
-
-
-
-    // try {
-    //   const transaction = await verifyTicket(
-    //     contract,
-    //     Proof,
-    //     toHex(nullifierHash),
-    //     toHex(commitmentHash),
-    //     recipient  // is already given in the hex format 
-    //   );
-    // } catch (error) {
-    //   alert(error.reason);
-    // }
   } catch (error) {
     console.log(error);
   }
