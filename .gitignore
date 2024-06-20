@@ -24,3 +24,4 @@ layer1/ignition/deployments/chain-31337
 contracts/target
 
 frontend/node_modules
+node_modules
