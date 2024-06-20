@@ -3,7 +3,7 @@ import "./App.css";
 import { connect } from "starknetkit";
 import CreateEvent from "./components/createEvent";
 import { RpcProvider } from "starknet";
-import Router from "./routes/Router";
+import ScanNoteButton1 from "./components/invalidateTicket";
 function App() {
   const [account, setAccount] = useState(null);
   async function connectWalletL2() {
@@ -21,7 +21,10 @@ function App() {
   return (
     <div>
       <button onClick={connectWalletL2}>connect</button>
-      <Router account={account} />
+      {/* <BuyTicket account={account} />
+      <CreateEvent account={account} /> */}
+      <ScanNoteButton1/>
+      
     </div>
   );
 }

@@ -198,13 +198,7 @@ async function invalidateTicket(nullifier, secret, nullifierHash, commitmentHash
   
 
     const contract = getL1Contract(provider, contractAddress);
-    console.log(contract);
-    console.log(recipient);
-    console.log(nullifierHash);
-    console.log(commitmentHash);
-    console.log(nullifier);
-    console.log(secret); 
-
+    
     const Proof = await generateProof(
       nullifier,
       secret,

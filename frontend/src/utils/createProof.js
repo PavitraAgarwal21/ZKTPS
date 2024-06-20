@@ -11,7 +11,7 @@ export const generateProof = async (
     secret: secret,
     nullifierHash: nullifierHash,
     commitment: commitmentHash,
-    recipient : recipient ,
+    recipient : recipient 
   };
 
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(

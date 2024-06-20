@@ -7,10 +7,8 @@ import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import {
   Invalidate,
-  connectWalletL1,
-  getL1Contract,
-  getL1Provider,
-  requestAccounts,
+  getL2contractRead,
+  getL2provider,
   toHex,
 } from "../web3/web3";
 import { useState } from "react";
@@ -87,7 +85,7 @@ function ScanNoteDialog(props) {
 /**
  * @param {ScanNoteButtonProps} props
  */
-export default function ScanNoteButton1(props) {
+export default function ScanNoteButton2(props) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -162,6 +160,10 @@ export const ViewFinder = () => (
     </svg>
   </>
 );
+
+
+
+
 // taking the recipient from the calling one 
 async function getData(result, error, props , recipient) {
   if (!!result) {
@@ -169,44 +171,100 @@ async function getData(result, error, props , recipient) {
     props.handleClose();
     try {
       const values = result?.text.split(",");
-      const nullifier = parseInt(values[0]);
-      console.log(nullifier);
-      const secret = parseInt(values[1]);
+      // const nullifier = parseInt(values[0]);
+      // console.log(nullifier);
+      // const secret = parseInt(values[1]);
       const nullifierHash = values[2];
       const commitmentHash = values[3];
+
+
       // how we get the values of the recipient from the one who is calling the function , 
       // so we what to know the address of recipient which is the one who is calling the function 
-      await verifyTicket(nullifier, secret, nullifierHash, commitmentHash , recipient );
+      await verifyTicket(props,nullifierHash, commitmentHash);
+    
+    
     } catch (error) {
       console.log(error);
     }
   }
 }
-async function verifyTicket(nullifier, secret, nullifierHash, commitmentHash,recipient) {
-  try {
-    await connectWalletL1();
-    const contractAddress = "";
-    const provider = getL1Provider();
-    const contract = getL1Contract(provider, contractAddress);
-    const Proof = await generateProof(
-      nullifier,
-      secret,
-      nullifierHash,
-      commitmentHash,
-      recipient,
 
-    );
-    try {
-      const transaction = await Invalidate(
-        contract,
-        Proof,
-        toHex(nullifierHash),
-        toHex(commitmentHash),
-        recipient  // is already given in the hex format 
-      );
-    } catch (error) {
-      alert(error.reason);
+async function verifyTicket(props,nullifierHash, commitmentHash) {
+  try {
+    // connect the l2 wallet and get their contract address 
+
+
+    const provider = getL2provider();
+    const contract = getL2contractRead(); 
+
+    console.log(provider);
+    // console.log(getContract);
+    console.log(nullifierHash);
+    console.log(commitmentHash); 
+
+
+
+// currently what the nullifier is we get the true // but with the commitment it get correct 
+// do that we can change in the contract of the veifyTicket 
+// changed it to 
+// fn verifyTicket( self : @ContractState,  
+//   _commitment : u256 ,
+//   _nullifierhash : u256
+// ) -> bool {
+
+//   if (self.nullifierHashes.read(_nullifierhash)) {
+//       return false ; 
+  
+//   }
+//   if (!self.TicketCommitments.read(_commitment).used) {
+//       return false ; 
+//   }
+//   return true ;  
+// }
+
+try {
+    let txn = await contract.verifyTicket(toHex(commitmentHash), toHex("836622806487433338769743880725219319348254608574699365962424627861927301875"));
+    console.log(txn);
+    if (txn == true) {
+      alert("Ticket is valid");
+    } else {
+      alert("Ticket is invalid");
     }
+  }catch(error) { 
+    console.log(error);
+  }
+
+
+
+    // const contract = getL1Contract(provider, contractAddress);
+    // console.log(contract);
+    // console.log(nullifier);
+    // console.log(secret);
+   
+    // console.log(recipient);
+
+    // const Proof = await generateProof(
+    //   nullifier,
+    //   secret,
+    //   nullifierHash,
+    //   commitmentHash,
+    //   recipient,
+    // );
+    // console.log(Proof);
+
+
+
+    // try {
+    //   const transaction = await verifyTicket(
+    //     contract,
+    //     Proof,
+    //     toHex(nullifierHash),
+    //     toHex(commitmentHash),
+    //     recipient  // is already given in the hex format 
+    //   );
+    // } catch (error) {
+    //   alert(error.reason);
+    // }
   } catch (error) {
     console.log(error);
   }
