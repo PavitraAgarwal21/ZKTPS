@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import random from "../utils/random";
 import { commitmentHash, nullifierHash } from "../utils/createHash";
 import {
@@ -11,10 +11,10 @@ import {
 import { CreateTicketQR } from "../utils/createTicketQR";
 import { downloadTicket } from "../utils/downloadTicket";
 import { useParams } from "react-router-dom";
-function BuyTicket(props) {
-  const [ticketDetails, setTicketDetails] = useState(null);
-  const [price, setPrice] = useState(null);
-  const account = props.account;
+import { toast } from "react-toastify";
+import { storeContext } from "../useContext/storeContext";
+function BuyTicket() {
+  const { account } = useContext(storeContext);
   const { event_index } = useParams();
   const eventUrl = `${window.location.origin}/event/${event_index}`;
   async function buy_ticket() {
@@ -23,7 +23,6 @@ function BuyTicket(props) {
     );
     const amount = event_price;
     console.log(event_price);
-    setPrice(amount);
     await approve(account, amount);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     const secret = random();
@@ -45,15 +44,14 @@ function BuyTicket(props) {
       const qrDataURL = await CreateTicketQR(noteString);
       const token_name = get_token_name(token_address);
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      downloadTicket(qrDataURL, price, token_name, event_name);
-      setTicketDetails(qrDataURL);
+      downloadTicket(qrDataURL, amount, token_name, event_name);
     } catch (error) {
-      alert(error);
+      toast.error(error);
     }
   }
   return (
     <div>
-      <p>{eventUrl}</p>
+      <p className="text-light">{eventUrl}</p>
       <button onClick={buy_ticket}>buy</button>
     </div>
   );

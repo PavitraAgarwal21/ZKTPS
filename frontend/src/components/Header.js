@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RpcProvider } from "starknet";
 import { connect } from "starknetkit";
 import logo from "../Img/logo1.png";
+import { toast } from "react-toastify";
+import { storeContext } from "../useContext/storeContext";
 const Header = () => {
   const [display, setDisplay] = useState(null);
-  const [account, setAccount] = useState(null);
+  //   const [account, setAccount] = useState(null);
+  const { account, setAccount } = useContext(storeContext);
   const truncateWalletAddress = async (address, length = 4) => {
     if (!address) return "";
     const start = address.substring(0, length);
@@ -20,8 +23,8 @@ const Header = () => {
       dappName: "ZKTPS",
     });
     if (wallet && wallet.isConnected) {
+      toast.success("connected");
       setAccount(wallet.account);
-      localStorage.setItem("account", wallet.account);
     }
   }
 

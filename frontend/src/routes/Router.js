@@ -5,7 +5,7 @@ import EventRoute from "./EventRoute";
 const Router = (props) => {
   return (
     <Routes>
-      <Route path="/" element={<CreateEvent account={props.account} />} />
+      <Route path="/" element={<CreateEvent />} />
       <Route
         path="/home/:event_index"
         element={<EventRoute account={props.account} />}
