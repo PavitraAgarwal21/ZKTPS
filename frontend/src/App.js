@@ -4,6 +4,7 @@ import { connect } from "starknetkit";
 import CreateEvent from "./components/createEvent";
 import { RpcProvider } from "starknet";
 import ScanNoteButton1 from "./components/invalidateTicket";
+import Router from "./routes/Router";
 function App() {
   const [account, setAccount] = useState(null);
   async function connectWalletL2() {
@@ -21,10 +22,9 @@ function App() {
   return (
     <div>
       <button onClick={connectWalletL2}>connect</button>
-      {/* <BuyTicket account={account} />
-      <CreateEvent account={account} /> */}
-      <ScanNoteButton1/>
-      
+      {/* <BuyTicket account={account} /> */}
+      <Router account={account} />
+      <ScanNoteButton1 dialogTitle="Scan to verify ticket" />
     </div>
   );
 }
