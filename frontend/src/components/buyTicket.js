@@ -16,11 +16,11 @@ function BuyTicket(props) {
   const [price, setPrice] = useState(null);
   const account = props.account;
   const { event_index } = useParams();
-  const token_address =
-    "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
-
+  const eventUrl = `${window.location.origin}/event/${event_index}`;
   async function buy_ticket() {
-    const { event_price, event_name } = await getDetails(event_index);
+    const { event_price, event_name, token_address } = await getDetails(
+      event_index
+    );
     const amount = event_price;
     console.log(event_price);
     setPrice(amount);
@@ -44,6 +44,7 @@ function BuyTicket(props) {
       const noteString = `${nullifier},${secret},${nullifier_hash},${commitment_hash},${event_index},${amount},${token_address}`;
       const qrDataURL = await CreateTicketQR(noteString);
       const token_name = get_token_name(token_address);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       downloadTicket(qrDataURL, price, token_name, event_name);
       setTicketDetails(qrDataURL);
     } catch (error) {
@@ -52,6 +53,7 @@ function BuyTicket(props) {
   }
   return (
     <div>
+      <p>{eventUrl}</p>
       <button onClick={buy_ticket}>buy</button>
     </div>
   );

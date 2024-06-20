@@ -45,9 +45,8 @@ export async function requestAccounts(provider) {
   return accounts[0];
 }
 export const getL1Contract = (provider, address) => {
-  
   const signer = provider.getSigner();
-return new ethers.Contract(address, TicketVerifierABI, signer);
+  return new ethers.Contract(address, TicketVerifierABI, signer);
 };
 export function toHex(number) {
   return ethers.BigNumber.from(number)._hex;
@@ -55,7 +54,13 @@ export function toHex(number) {
 export function toDecimal(number) {
   return parseInt(number, 16);
 }
-export async function Invalidate(contract, proof, nullifierHash, commitment,recipient) {
+export async function Invalidate(
+  contract,
+  proof,
+  nullifierHash,
+  commitment,
+  recipient
+) {
   const proofA = Proofa(proof);
   const proofB = Proofb(proof);
   const proofC = Proofc(proof);
@@ -65,7 +70,7 @@ export async function Invalidate(contract, proof, nullifierHash, commitment,reci
     proofC,
     nullifierHash,
     commitment,
-    recipient 
+    recipient
   );
 }
 
@@ -95,7 +100,8 @@ export const getDetails = async (event_index) => {
     const tx = await contract.getEventdetails(event_index);
     const event_name = shortString.decodeShortString(tx.eventName);
     const event_price = tx.price;
-    return { event_price, event_name };
+    const token_address = tx.customToken;
+    return { event_price, event_name, token_address };
   } catch (error) {
     alert(error);
   }
@@ -111,5 +117,12 @@ export const get_token_name = (address) => {
     "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7"
   ) {
     return "ETH";
+  }
+};
+export const get_token_address = (name) => {
+  if (name == "STRK") {
+    return "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
+  } else if (name == "ETH") {
+    return "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
   }
 };

@@ -3,14 +3,57 @@ import {
   getL2contract,
   getL2contractRead,
   getL2provider,
+  get_token_address,
   toDecimal,
 } from "../web3/web3";
 import random from "../utils/random";
 import { useNavigate } from "react-router-dom";
+import Modal from "react-modal";
+import { useState } from "react";
+import "../styles/eventModal.css";
+const customStyles = {
+  overlay: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  content: {
+    position: "relative",
+    top: "auto",
+    left: "auto",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "0",
+    transform: "none",
+  },
+};
 export default function CreateEvent(props) {
   const history = useNavigate();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedToken, setSelectedToken] = useState("ETH");
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const handleTokenChange = (event) => {
+    setSelectedToken(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await create_event();
+    closeModal();
+  };
   async function create_event() {
-    const token_address = document.querySelector("#address").value;
+    let token_address = get_token_address(selectedToken);
+    if (selectedToken === "custom") {
+      token_address = document.querySelector("address").value;
+    }
     const provider = getL2provider();
     let event_index = random();
     let price = document.querySelector("#price").value;
@@ -29,6 +72,7 @@ export default function CreateEvent(props) {
         token_address
       );
       console.log(tx);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       history(`home/${event_index}`);
       // const transactionHash = tx.transaction_hash;
       // console.log(transactionHash);
@@ -54,13 +98,57 @@ export default function CreateEvent(props) {
   }
   return (
     <div>
-      <input type="text" placeholder="enter event name" id="name" />
-      <input type="text" placeholder="enter price" id="price" />
-      <input type="text" placeholder="enter number of tickets" id="tickets" />
-      <input type="text" placeholder="enter token address here" id="address" />
-      <button onClick={create_event}>create</button>
-      <input type="text" placeholder="enter the event_index" id="eventId" />
-      <button onClick={join_event}>join</button>
+      <button onClick={openModal}>Create Event</button>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        overlayClassName="modal-overlay"
+        className="modal-content"
+        style={customStyles}
+        contentLabel="Create Event Modal"
+      >
+        <h2>Create Event</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Event Name:</label>
+            <input type="text" id="name" required />
+          </div>
+          <div>
+            <label>Ticket Price:</label>
+            <input type="number" id="price" required />
+          </div>
+          <div>
+            <label>Number of Tickets:</label>
+            <input type="number" id="tickets" required />
+          </div>
+          <div>
+            <label>Select Token:</label>
+            <select value={selectedToken} onChange={handleTokenChange} required>
+              <option value="ETH">ETH</option>
+              <option value="STRK">STRK</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          {selectedToken === "custom" && (
+            <div>
+              <label>Custom Token Address:</label>
+              <input type="text" id="address" required />
+            </div>
+          )}
+          <div>
+            <button type="submit" className="create-button">
+              Create Event
+            </button>
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={closeModal}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

@@ -10,7 +10,9 @@ const EventRoute = (props) => {
   useEffect(() => {
     const checkEventIndex = async () => {
       try {
-        const { event_price, event_name } = await getDetails(event_index);
+        const { event_price, event_name, token_address } = await getDetails(
+          event_index
+        );
         if (event_price == 0) {
           setIsValid(false);
         } else {
