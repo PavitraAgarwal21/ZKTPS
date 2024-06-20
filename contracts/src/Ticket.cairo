@@ -268,6 +268,8 @@ self.TicketCommitments.write(oldCommitment , TicketCommitment {
     used : false ,
     ..self.TicketCommitments.read(oldCommitment)    
 });
+
+
 //also nullifies the ticket  the ticket
 self.nullifierHashes.write(oldNullifier , true) ;
 

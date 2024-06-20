@@ -1,5 +1,5 @@
 import { Contract, RpcProvider, shortString } from "starknet";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { Proofa, Proofb, Proofc } from "../utils/packToSolidityProof";
 import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
@@ -126,3 +126,9 @@ export const get_token_address = (name) => {
     return "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
   }
 };
+export function calculatePurchaseFeeLocal(purchasePrice) {
+  const fee = purchasePrice.div(100);
+  const total = purchasePrice.add(fee);
+  return [total, fee];
+}
+

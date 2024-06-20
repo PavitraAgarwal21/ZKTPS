@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
 import crypto from "../modules/crypto-browserify";
+
+
 export default function random() {
   const min = new BigNumber("1000000000000000000000"); // 10^21
   const max = new BigNumber("9999999999999999999999"); // Just an example upper limit

@@ -218,7 +218,7 @@ async function verifyTicket(props,nullifierHash, commitmentHash) {
 // }
 
 try {
-    let txn = await contract.verifyTicket(toHex(commitmentHash), toHex("836622806487433338769743880725219319348254608574699365962424627861927301875"));
+    let txn = await contract.verifyTicket(toHex(commitmentHash), toHex(nullifierHash));
     console.log(txn);
     if (txn == true) {
       alert("Ticket is valid");

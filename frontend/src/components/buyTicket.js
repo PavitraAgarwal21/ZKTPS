@@ -17,6 +17,7 @@ function BuyTicket() {
   const { account } = useContext(storeContext);
   const { event_index } = useParams();
   const eventUrl = `${window.location.origin}/event/${event_index}`;
+
   async function buy_ticket() {
     const { event_price, event_name, token_address } = await getDetails(
       event_index

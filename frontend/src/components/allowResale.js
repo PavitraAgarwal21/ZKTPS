@@ -186,8 +186,7 @@ async function getData(result, error, props ) {
       // how we get the values of the recipient from the one who is calling the function , 
       // so we what to know the address of recipient which is the one who is calling the function 
       await allowResale(nullifierHash, commitmentHash);
-    
-    
+
     } catch (error) {
       console.log(error);
     }
@@ -200,6 +199,7 @@ async function allowResale( nullifierhash , commitmentHash) {
     let txn = await contract.approveToTicketResale(toHex(commitmentHash) , toHex(nullifierhash) );
     console.log(txn); 
 
+    // store this ticket in the datababase 
 
   } catch (error) {
     alert(error);
