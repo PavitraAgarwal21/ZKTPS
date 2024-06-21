@@ -1,0 +1,377 @@
+[
+    {
+      "name": "Ticket",
+      "type": "impl",
+      "interface_name": "contracts::Ticket::IGetTicket"
+    },
+    {
+      "name": "core::integer::u256",
+      "type": "struct",
+      "members": [
+        {
+          "name": "low",
+          "type": "core::integer::u128"
+        },
+        {
+          "name": "high",
+          "type": "core::integer::u128"
+        }
+      ]
+    },
+    {
+      "name": "contracts::Ticket::Ticket::TicketEvent",
+      "type": "struct",
+      "members": [
+        {
+          "name": "creator",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "name": "price",
+          "type": "core::integer::u256"
+        },
+        {
+          "name": "eventName",
+          "type": "core::felt252"
+        },
+        {
+          "name": "noOfTicketAvl",
+          "type": "core::integer::u128"
+        },
+        {
+          "name": "customToken",
+          "type": "core::starknet::contract_address::ContractAddress"
+        }
+      ]
+    },
+    {
+      "name": "core::bool",
+      "type": "enum",
+      "variants": [
+        {
+          "name": "False",
+          "type": "()"
+        },
+        {
+          "name": "True",
+          "type": "()"
+        }
+      ]
+    },
+    {
+      "name": "contracts::Ticket::Ticket::TicketCommitment",
+      "type": "struct",
+      "members": [
+        {
+          "name": "buyer",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "name": "ticketEventIndex",
+          "type": "core::integer::u256"
+        },
+        {
+          "name": "used",
+          "type": "core::bool"
+        },
+        {
+          "name": "resale",
+          "type": "core::bool"
+        }
+      ]
+    },
+    {
+      "name": "contracts::Ticket::IGetTicket",
+      "type": "interface",
+      "items": [
+        {
+          "name": "getEventdetails",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "_ticketEventIndex",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [
+            {
+              "type": "contracts::Ticket::Ticket::TicketEvent"
+            }
+          ],
+          "state_mutability": "view"
+        },
+        {
+          "name": "createTicketEvent",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "event_id",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "_price",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "_event_name",
+              "type": "core::felt252"
+            },
+            {
+              "name": "_noOfTicket",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "_customToken",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
+          "name": "buyTicket",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "event_index",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "commitment",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "token_address",
+              "type": "core::starknet::contract_address::ContractAddress"
+            }
+          ],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
+          "name": "calculateFees",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "_ticketPrice",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [
+            {
+              "type": "(core::integer::u256, core::integer::u256)"
+            }
+          ],
+          "state_mutability": "view"
+        },
+        {
+          "name": "getTicket",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "_commitment",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [
+            {
+              "type": "contracts::Ticket::Ticket::TicketCommitment"
+            }
+          ],
+          "state_mutability": "view"
+        },
+        {
+          "name": "verifyTicket",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "_commitment",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "_nullifierhash",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [
+            {
+              "type": "core::bool"
+            }
+          ],
+          "state_mutability": "view"
+        },
+        {
+          "name": "approveToTicketResale",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "_commitment",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "_nullifierhash",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
+          "name": "buyResaleTicket",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newCommitment",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "oldNullifier",
+              "type": "core::integer::u256"
+            },
+            {
+              "name": "oldCommitment",
+              "type": "core::integer::u256"
+            }
+          ],
+          "outputs": [],
+          "state_mutability": "external"
+        }
+      ]
+    },
+    {
+      "name": "invalidateTicketL1Handler",
+      "type": "l1_handler",
+      "inputs": [
+        {
+          "name": "from_address",
+          "type": "core::felt252"
+        },
+        {
+          "name": "nullifier1",
+          "type": "core::integer::u128"
+        },
+        {
+          "name": "nullifier2",
+          "type": "core::integer::u128"
+        },
+        {
+          "name": "commitment1",
+          "type": "core::integer::u128"
+        },
+        {
+          "name": "commitment2",
+          "type": "core::integer::u128"
+        }
+      ],
+      "outputs": [],
+      "state_mutability": "external"
+    },
+    {
+      "kind": "struct",
+      "name": "contracts::Ticket::Ticket::newTicketEvent",
+      "type": "event",
+      "members": [
+        {
+          "kind": "key",
+          "name": "creator",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "kind": "data",
+          "name": "ticketEventIndex",
+          "type": "core::integer::u256"
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "contracts::Ticket::Ticket::inValidatedTicket",
+      "type": "event",
+      "members": [
+        {
+          "kind": "key",
+          "name": "buyer",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "kind": "data",
+          "name": "ticketEventIndex",
+          "type": "core::integer::u256"
+        },
+        {
+          "kind": "data",
+          "name": "creatorOfTicket",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "kind": "data",
+          "name": "commitment",
+          "type": "core::integer::u256"
+        },
+        {
+          "kind": "data",
+          "name": "nullifierhash",
+          "type": "core::integer::u256"
+        },
+        {
+          "kind": "data",
+          "name": "fromAddress",
+          "type": "core::felt252"
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "contracts::Ticket::Ticket::buyingTicket",
+      "type": "event",
+      "members": [
+        {
+          "kind": "key",
+          "name": "buyer",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "kind": "data",
+          "name": "ticketEventIndex",
+          "type": "core::integer::u256"
+        },
+        {
+          "kind": "data",
+          "name": "creatorOfTicket",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "kind": "data",
+          "name": "commitment",
+          "type": "core::integer::u256"
+        },
+        {
+          "kind": "data",
+          "name": "nullifierhash",
+          "type": "core::integer::u256"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "contracts::Ticket::Ticket::Event",
+      "type": "event",
+      "variants": [
+        {
+          "kind": "nested",
+          "name": "newTicketEvent",
+          "type": "contracts::Ticket::Ticket::newTicketEvent"
+        },
+        {
+          "kind": "nested",
+          "name": "inValidatedTicket",
+          "type": "contracts::Ticket::Ticket::inValidatedTicket"
+        },
+        {
+          "kind": "nested",
+          "name": "buyingTicket",
+          "type": "contracts::Ticket::Ticket::buyingTicket"
+        }
+      ]
+    }
+  ]

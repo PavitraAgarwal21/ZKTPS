@@ -3,8 +3,6 @@ use starknet::ContractAddress ;
 #[starknet::interface] 
 pub trait IGetTicket<TContractState> 
 {
-    fn getContractOwner(self: @TContractState) -> ContractAddress ;  
-    fn getVerifier(self: @TContractState) -> felt252 ;   
     fn getEventdetails(self : @TContractState , _ticketEventIndex : u256) -> Ticket::TicketEvent ; 
     fn createTicketEvent(ref self : TContractState ,event_id : u256,_price : u256 , _event_name : felt252 , _noOfTicket : u128 , _customToken: ContractAddress )  ;
     fn buyTicket(ref self : TContractState , event_index : u256 , commitment : u256 , token_address:ContractAddress ) ;
@@ -53,17 +51,12 @@ mod Ticket {
     struct Storage 
     {
     contractOwner : ContractAddress ,
-    verifier : felt252 , 
+    // verifier : felt252 , 
     ticketEvents : LegacyMap::<u256 , TicketEvent> ,
     TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
     nullifierHashes : LegacyMap::<u256 , bool>  ,
     }
-
-    #[constructor]
-    fn constructor(ref self: ContractState , _verifier : felt252) {
-        self.verifier.write(_verifier);
-        self.contractOwner.write(get_caller_address());
-    }
+    
 
     #[derive(Drop, Serde , starknet::Store)] 
     pub struct TicketEvent {
@@ -107,6 +100,7 @@ struct inValidatedTicket {
     creatorOfTicket : ContractAddress ,
     commitment  : u256 ,
     nullifierhash : u256 , 
+    fromAddress : felt252  
 }
 
 #[derive(Drop , Serde , starknet::Event)] 
@@ -119,19 +113,9 @@ struct buyingTicket {
     nullifierhash : u256 , 
 }
 
-
-
-
-
 #[abi(embed_v0)]
     impl  Ticket of IGetTicket<ContractState> 
     {
-        fn getContractOwner(self: @ContractState) -> ContractAddress {
-            self.contractOwner.read() 
-        }
-        fn getVerifier(self: @ContractState) -> felt252 {
-            self.verifier.read() 
-        }
         fn getEventdetails(self : @ContractState , _ticketEventIndex : u256) -> TicketEvent {
             self.ticketEvents.read(_ticketEventIndex) 
         }
@@ -348,11 +332,12 @@ assert(status==true,'transfer failed event creator');
     fn invalidateTicketL1Handler (ref self: ContractState, from_address: felt252 , nullifier1 : u128  , nullifier2 : u128, commitment1 : u128 , commitment2 :u128 ) {
     
 
-        let verifier=self.verifier.read();
+        // let verifier=self.verifier.read();
         // contract address checking that it  is comming from the correct verifier contract 
-        assert(from_address == verifier ,'unauthorized caller') ;
+        // assert(from_address == verifier ,'unauthorized caller') ;
         // first we have correctly serialized this value fucntion into this valueFromL1 struct 
-            // assert(from_address == self.l1Address.read() ,'unauthorized contract calling handler') ; 
+
+            // assert(from_address ==  ,'unauthorized contract calling handler') ; 
 
             let nullifierhash = u256{
                 low : nullifier1,
@@ -365,9 +350,10 @@ assert(status==true,'transfer failed event creator');
             };
 
          // the calling of this is the creator of the ticket event 
-        assert(self.verifyTicket(commitmenthash , nullifierhash) , 'ticket is not valid'); 
+        // assert(self.verifyTicket(commitmenthash , nullifierhash) , 'ticket is not valid'); 
 
         self.nullifierHashes.write(nullifierhash, true ); 
+        
         self.TicketCommitments.write(commitmenthash , TicketCommitment {
             used : false ,
             ..self.TicketCommitments.read(commitmenthash)    
@@ -385,7 +371,8 @@ assert(status==true,'transfer failed event creator');
             ticketEventIndex : self.TicketCommitments.read(commitmenthash).ticketEventIndex,
             creatorOfTicket : self.ticketEvents.read(self.TicketCommitments.read(commitmenthash).ticketEventIndex).creator,
             commitment : commitmenthash,
-            nullifierhash : nullifierhash,
+            nullifierhash : nullifierhash, 
+            fromAddress : from_address, 
         });
     }
 

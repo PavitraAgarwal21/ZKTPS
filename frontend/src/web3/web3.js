@@ -3,10 +3,10 @@ import { BigNumber, ethers } from "ethers";
 import { Proofa, Proofb, Proofc } from "../utils/packToSolidityProof";
 import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
-import abi3 from "../abis/myAbi.json";
+import abi3 from "../abis/newTicket.json";
 import TicketVerifierABI from "../abis/TicketVerifierABI.json";
-export const Contract_Address =
-  "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
+export const Contract_Address ="0x013c921a7e308e85a08c1c7d1f1648767de8c251dd6870d19086a92aebf3808c";
+  // "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
 export const L1_Contract_Address = "0xC59A87F9a1498998ecbfd83CBDC3b85B6eC3Eb89";
 export const STRK_token_address =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
@@ -73,9 +73,10 @@ export async function Invalidate(
     commitment,
     recipient,
     Contract_Address,
-    selector
-  );
-}
+    selector , 
+    {value: ethers.utils.parseEther("0.001")});
+  }
+
 
 export async function approve(account, amount) {
   const contract_token = new Contract(abi1, ETH_token_address, account);
