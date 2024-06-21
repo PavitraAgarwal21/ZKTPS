@@ -12,6 +12,7 @@ import {
   getL1Provider,
   requestAccounts,
   toHex,
+  L1_Contract_Address,
 } from "../web3/web3";
 import { useState } from "react";
 import { on } from "process";
@@ -27,7 +28,6 @@ import { on } from "process";
 /**
  * @param {QRReaderProps} props
  */
-
 
 const QRReader = (props) => {
   const facingMode = isMobile ? "environment" : "user";
@@ -162,8 +162,8 @@ export const ViewFinder = () => (
     </svg>
   </>
 );
-// taking the recipient from the calling one 
-async function getData(result, error, props , recipient) {
+// taking the recipient from the calling one
+async function getData(result, error, props, recipient) {
   if (!!result) {
     alert("Qr Scanned Successful");
     props.handleClose();
@@ -174,37 +174,35 @@ async function getData(result, error, props , recipient) {
       const secret = parseInt(values[1]);
       const nullifierHash = values[2];
       const commitmentHash = values[3];
-      // how we get the values of the recipient from the one who is calling the function , 
-      // so we what to know the address of recipient which is the one who is calling the function 
-     
-      await invalidateTicket(nullifier, secret, nullifierHash, commitmentHash );
-    
-    
+      // how we get the values of the recipient from the one who is calling the function ,
+      // so we what to know the address of recipient which is the one who is calling the function
+
+      await invalidateTicket(nullifier, secret, nullifierHash, commitmentHash);
     } catch (error) {
       console.log(error);
     }
   }
 }
 
-
-
-async function invalidateTicket(nullifier, secret, nullifierHash, commitmentHash) {
+async function invalidateTicket(
+  nullifier,
+  secret,
+  nullifierHash,
+  commitmentHash
+) {
   try {
     await connectWalletL1();
-    const contractAddress = "0xC59A87F9a1498998ecbfd83CBDC3b85B6eC3Eb89";
+    const contractAddress = L1_Contract_Address;
     const provider = getL1Provider();
     const recipient = await requestAccounts(provider);
-    
-  
-
     const contract = getL1Contract(provider, contractAddress);
-    
+    const selector = "";
     const Proof = await generateProof(
       nullifier,
       secret,
       nullifierHash,
       commitmentHash,
-      recipient 
+      recipient
     );
 
     // console.log(Proof);
@@ -215,12 +213,11 @@ async function invalidateTicket(nullifier, secret, nullifierHash, commitmentHash
         Proof,
         toHex(nullifierHash),
         toHex(commitmentHash),
-        recipient  // is already given in the hex format 
+        recipient,
+        selector
       );
-
       await transaction.wait();
       window.alert("invalidate Successful");
-
     } catch (error) {
       alert(error);
     }

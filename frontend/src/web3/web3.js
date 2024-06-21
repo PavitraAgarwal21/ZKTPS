@@ -7,7 +7,7 @@ import abi3 from "../abis/myAbi.json";
 import TicketVerifierABI from "../abis/TicketVerifierABI.json";
 export const Contract_Address =
   "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
-export const L1_Contract_Address = "";
+export const L1_Contract_Address = "0xC59A87F9a1498998ecbfd83CBDC3b85B6eC3Eb89";
 export const STRK_token_address =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 export const ETH_token_address =
@@ -59,18 +59,21 @@ export async function Invalidate(
   proof,
   nullifierHash,
   commitment,
-  recipient
+  recipient,
+  selector
 ) {
   const proofA = Proofa(proof);
   const proofB = Proofb(proof);
   const proofC = Proofc(proof);
-  return await contract.InvalidateTicket(
+  return await contract.invalidateTicket(
     proofA,
     proofB,
     proofC,
     nullifierHash,
     commitment,
-    recipient
+    recipient,
+    Contract_Address,
+    selector
   );
 }
 
@@ -131,4 +134,3 @@ export function calculatePurchaseFeeLocal(purchasePrice) {
   const total = purchasePrice.add(fee);
   return [total, fee];
 }
-
