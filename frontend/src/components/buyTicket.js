@@ -46,7 +46,14 @@ function BuyTicket() {
       const qrDataURL = await CreateTicketQR(noteString);
       const token_name = get_token_name(token_address);
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      downloadTicket(qrDataURL, amount, token_name, event_name);
+      downloadTicket(
+        qrDataURL,
+        amount,
+        token_name,
+        event_index,
+        event_name,
+        account.address
+      );
     } catch (error) {
       toast.error(error);
     }
