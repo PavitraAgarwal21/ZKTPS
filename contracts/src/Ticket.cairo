@@ -50,8 +50,6 @@ mod Ticket {
     #[storage]
     struct Storage 
     {
-    contractOwner : ContractAddress ,
-    // verifier : felt252 , 
     ticketEvents : LegacyMap::<u256 , TicketEvent> ,
     TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
     nullifierHashes : LegacyMap::<u256 , bool>  ,
