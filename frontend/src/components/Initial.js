@@ -19,7 +19,7 @@ export default function Initial() {
             <p className="text-white">Entering Event...</p>
           </>
         ) : (
-          <div className="flex justify-center items-center h-screen bg-gray-100">
+          <div className="flex justify-center items-center h-screen bg-gray-900">
             <div className="flex space-x-6">
               <Card className="max-w-sm p-6 min-h-[200px]">
                 <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-4 text-center">

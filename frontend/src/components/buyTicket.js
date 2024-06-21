@@ -13,18 +13,33 @@ import { downloadTicket } from "../utils/downloadTicket";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { storeContext } from "../useContext/storeContext";
-import { Button, Clipboard } from "flowbite-react";
+import { Button, Card, Clipboard } from "flowbite-react";
 function BuyTicket() {
   const { account } = useContext(storeContext);
   const { event_index } = useParams();
-  const eventUrl = `${window.location.origin}/event/${event_index}`;
-
+  const eventUrl = `${window.location.origin}/home/${event_index}`;
+  const [price, setPrice] = useState(null);
+  const [name, setName] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [tName, setTName] = useState(null);
+  useEffect(() => {
+    async function fetchDetails() {
+      const { event_price, event_name, token_address } = await getDetails(
+        event_index
+      );
+      setPrice(parseInt(event_price));
+      setName(event_name);
+      const t_name = get_token_name(token_address);
+      setTName(t_name);
+      setAddress(token_address);
+    }
+    fetchDetails();
+  }, []);
   async function buy_ticket() {
     const { event_price, event_name, token_address } = await getDetails(
       event_index
     );
     const amount = event_price;
-    console.log(event_price);
     await approve(account, amount);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     const secret = random();
@@ -54,29 +69,42 @@ function BuyTicket() {
         event_name,
         account.address
       );
+      toast.error("ticket bought successfully");
     } catch (error) {
       toast.error(error);
     }
   }
   return (
-    <div className="flex justify-center">
-      <div className="grid w-full max-w-[23rem] grid-cols-8 gap-2">
+    <div className="flex flex-col justify-center items-center h-full">
+      <div className="flex items-center w-full max-w-[23rem] gap-2 mb-4">
         <label htmlFor="text" className="sr-only">
           Label
         </label>
         <input
           id="text"
           type="text"
-          className="col-span-6 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          className="flex-grow block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
           value={eventUrl}
           disabled
           readOnly
         />
         <Clipboard valueToCopy={eventUrl} label="Copy" />
       </div>
-      <Button color="light" onClick={buy_ticket}>
-        buy
-      </Button>
+      <Card className="max-w-sm w-full">
+        <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Buy Ticket
+        </h5>
+        <p className="font-normal text-gray-700 dark:text-gray-400">
+          Event Id: {event_index}
+        </p>
+        <p className="font-normal text-gray-700 dark:text-gray-400">
+          Event Name : {name}
+        </p>
+        <p className="font-normal text-gray-700 dark:text-gray-400">
+          Price: {price} {tName}
+        </p>
+        <Button onClick={buy_ticket}>Buy Ticket</Button>
+      </Card>
     </div>
   );
 }

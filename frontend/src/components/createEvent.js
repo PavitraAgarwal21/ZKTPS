@@ -95,7 +95,11 @@ export default function CreateEvent() {
   return (
     <div>
       <div className="flex justify-center h-full items-center">
-        <Button color="light" onClick={() => setModalIsOpen(true)}>
+        <Button
+          color="light"
+          onClick={() => setModalIsOpen(true)}
+          className="mt-12"
+        >
           Create Event
         </Button>
         <Modal show={modalIsOpen} size="md" onClose={closeModal} popup>

@@ -7,7 +7,7 @@ import { storeContext } from "../useContext/storeContext";
 const EventRoute = (props) => {
   const { event_index } = useParams();
   const [isValid, setIsValid] = useState(null);
-  const { event_creation } = useContext(storeContext);
+  const { event_creation, setStatus } = useContext(storeContext);
   useEffect(() => {
     const checkEventIndex = async () => {
       if (!event_creation) {
@@ -19,6 +19,7 @@ const EventRoute = (props) => {
             setIsValid(false);
           } else {
             setIsValid(true);
+            setStatus(true);
           }
         } catch (error) {
           setIsValid(false);
@@ -41,7 +42,7 @@ const EventRoute = (props) => {
     return <Navigate to="/error" />; // Adjust the path as necessary
   }
 
-  return <BuyTicket account={props.account} />;
+  return <BuyTicket />;
 };
 
 export default EventRoute;
