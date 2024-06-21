@@ -1,19 +1,14 @@
 import { shortString } from "starknet";
-import {
-  getL2contract,
-  getL2contractRead,
-  getL2provider,
-  get_token_address,
-  toDecimal,
-} from "../web3/web3";
+import { getL2contract, getL2provider, get_token_address } from "../web3/web3";
 import random from "../utils/random";
 import { useNavigate } from "react-router-dom";
-import Modal from "react-modal";
 import { useContext, useState } from "react";
 import "../styles/eventModal.css";
 import { toast } from "react-toastify";
-import BeatLoader from "react-spinners/BeatLoader";
 import { storeContext } from "../useContext/storeContext";
+import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
+
+import { LoadingContext } from "../useContext/LoadingContext";
 const customStyles = {
   overlay: {
     display: "flex",
@@ -35,11 +30,7 @@ export default function CreateEvent() {
   const history = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState("ETH");
-  const [loading, setLoading] = useState(false);
-  const override = {
-    display: "block",
-    marginTop: "250px",
-  };
+  const { loading, setLoading } = useContext(LoadingContext);
   const openModal = () => {
     setModalIsOpen(true);
   };
@@ -101,61 +92,48 @@ export default function CreateEvent() {
     toast.success("Event created successfully");
     history(`home/${event_index}`);
   }
-  async function join_event() {
-    const event_index = document.querySelector("#eventId").value;
-    const contract = getL2contractRead();
-    const tx = await contract.getEventdetails(event_index);
-    console.log(tx);
-    if (tx.creator == "0") {
-      alert("Invalid event_index");
-      return;
-    } else {
-      history(`home/${event_index}`);
-    }
-  }
   return (
     <div>
-      {loading ? (
-        <>
-          <BeatLoader color="#ffffff" cssOverride={override} />
-          <p className="text-light">Fetching Transactions...</p>
-        </>
-      ) : (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ marginTop: "300px" }}
-        >
-          <button onClick={openModal} className="btn btn-success">
-            Create Event
-          </button>
-          <button onClick={join_event} className="btn btn-warning">
-            Join Event
-          </button>
-          <Modal
-            isOpen={modalIsOpen}
-            onRequestClose={closeModal}
-            overlayClassName="modal-overlay_custom"
-            className="modal-content_custom"
-            style={customStyles}
-            contentLabel="Create Event Modal"
-          >
-            <h2>Create Event</h2>
-            <form onSubmit={handleSubmit}>
+      <div className="flex justify-center" style={{ marginTop: "300px" }}>
+        <Button color="light" onClick={() => setModalIsOpen(true)}>
+          Create Event
+        </Button>
+        <Modal show={modalIsOpen} size="md" onClose={closeModal} popup>
+          <Modal.Header />
+          <Modal.Body>
+            <div className="space-y-6">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                Create Event
+              </h3>
               <div>
-                <label>Event Name:</label>
-                <input type="text" id="name" required />
+                <div className="mb-2 block">
+                  <Label htmlFor="text" value="Event Name:" />
+                </div>
+                <TextInput id="name" placeholder="Enter event name" required />
               </div>
               <div>
-                <label>Ticket Price:</label>
-                <input type="number" id="price" required />
+                <div className="mb-2 block">
+                  <Label htmlFor="number" value="Price:" />
+                </div>
+                <TextInput
+                  id="price"
+                  placeholder="Enter ticket price"
+                  required
+                />
               </div>
               <div>
-                <label>Number of Tickets:</label>
-                <input type="number" id="tickets" required />
+                <div className="mb-2 block">
+                  <Label htmlFor="number" value="Number of Tickets:" />
+                </div>
+                <TextInput
+                  id="tickets"
+                  placeholder="Enter no of tickets"
+                  required
+                />
               </div>
               <div>
-                <label>Select Token:</label>
-                <select
+                <Label htmlFor="text" value="Select Token:" />
+                <Select
                   value={selectedToken}
                   onChange={handleTokenChange}
                   required
@@ -163,30 +141,21 @@ export default function CreateEvent() {
                   <option value="ETH">ETH</option>
                   <option value="STRK">STRK</option>
                   <option value="custom">Custom</option>
-                </select>
+                </Select>
               </div>
               {selectedToken === "custom" && (
                 <div>
-                  <label>Custom Token Address:</label>
-                  <input type="text" id="address" required />
+                  <Label htmlFor="text" value="Custom Token Address:" />
+                  <TextInput type="text" id="address" required />
                 </div>
               )}
-              <div>
-                <button type="submit" className="create-button">
-                  Create Event
-                </button>
-                <button
-                  type="button"
-                  className="cancel-button"
-                  onClick={closeModal}
-                >
-                  Cancel
-                </button>
+              <div className="w-full">
+                <Button onClick={create_event}>Create</Button>
               </div>
-            </form>
-          </Modal>
-        </div>
-      )}
+            </div>
+          </Modal.Body>
+        </Modal>
+      </div>
     </div>
   );
 }

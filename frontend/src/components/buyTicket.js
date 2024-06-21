@@ -13,6 +13,7 @@ import { downloadTicket } from "../utils/downloadTicket";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { storeContext } from "../useContext/storeContext";
+import { Button, Clipboard } from "flowbite-react";
 function BuyTicket() {
   const { account } = useContext(storeContext);
   const { event_index } = useParams();
@@ -51,9 +52,24 @@ function BuyTicket() {
     }
   }
   return (
-    <div>
-      <p className="text-light">{eventUrl}</p>
-      <button onClick={buy_ticket}>buy</button>
+    <div className="flex justify-center">
+      <div className="grid w-full max-w-[23rem] grid-cols-8 gap-2">
+        <label htmlFor="text" className="sr-only">
+          Label
+        </label>
+        <input
+          id="text"
+          type="text"
+          className="col-span-6 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          value={eventUrl}
+          disabled
+          readOnly
+        />
+        <Clipboard valueToCopy={eventUrl} label="Copy" />
+      </div>
+      <Button color="light" onClick={buy_ticket}>
+        buy
+      </Button>
     </div>
   );
 }

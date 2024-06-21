@@ -1,18 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 import { connect } from "starknetkit";
-import CreateEvent from "./components/createEvent";
 import { RpcProvider } from "starknet";
-import BuyTicket from "./components/buyTicket";
-import ScanNoteButton1 from "./components/invalidateTicket";
-import ScanNoteButton2 from "./components/verifyTicket";
-import ScanNoteButton3 from "./components/allowResale";
-import BuyResaleTicket from "./components/buyResaleTicket";
 import Router from "./routes/Router";
 import Header from "./components/Header";
 import { storeContext } from "./useContext/storeContext";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   const [account, setAccount] = useState(null);
@@ -43,9 +35,7 @@ function App() {
     >
       <div className="App">
         <Header />
-        {/* <BuyTicket account={account} /> */}
-        <Router account={account} />
-        {/* <ScanNoteButton1 dialogTitle="Scan to verify ticket " /> */}
+        <Router account={account} />={" "}
       </div>
     </storeContext.Provider>
   );

@@ -5,6 +5,7 @@ import { connect } from "starknetkit";
 import logo from "../Img/logo1.png";
 import { toast } from "react-toastify";
 import { storeContext } from "../useContext/storeContext";
+import { Button, Navbar } from "flowbite-react";
 const Header = () => {
   const [display, setDisplay] = useState(null);
   //   const [account, setAccount] = useState(null);
@@ -41,62 +42,35 @@ const Header = () => {
   }, [account]);
 
   return (
-    <nav className="navbar navbar-expand-lg sticky-top navbar-dark text-bg-dark shadow">
-      <div className="container">
-        <Link className="navbar-brand" to="/" style={{ fontSize: "25px" }}>
-          <img
-            src={logo}
-            width="50"
-            height="50"
-            className="d-inline-block align-top"
-            alt="Logo"
-          />
-          <span className="ms-1">ZKTPS</span>
-        </Link>
-        <button
-          className="navbar-toggler"
-          data-bs-target="#navDrop"
-          data-bs-toggle="collapse"
-          aria-controls="navDrop"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navDrop">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/verify" className="nav-link">
-                Verify Ticket
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/invalidate" className="nav-link">
-                Invalidate Ticket
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/info" className="nav-link">
-                Info
-              </Link>
-            </li>
-            {!account ? (
-              <li className="nav-item">
-                <button className="btn btn-light" onClick={connectWalletL2}>
-                  Connect Wallet
-                </button>
-              </li>
-            ) : (
-              <li className="nav-item ms-1">
-                <button className="btn btn-light" onClick={connectWalletL2}>
-                  {display}
-                </button>
-              </li>
-            )}
-          </ul>
-        </div>
+    <Navbar fluid rounded>
+      <Navbar.Brand href="/">
+        <img src={logo} className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
+        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+          ZKTPS
+        </span>
+      </Navbar.Brand>
+      <div className="flex md:order-2">
+        {!account ? (
+          <Button color="dark" onClick={connectWalletL2}>
+            Connect Wallet
+          </Button>
+        ) : (
+          <Button color="dark" onClick={connectWalletL2}>
+            {display}
+          </Button>
+        )}
+        <Navbar.Toggle />
       </div>
-    </nav>
+      <Navbar.Collapse>
+        <Navbar.Link href="#" active>
+          Home
+        </Navbar.Link>
+        <Navbar.Link href="#">About</Navbar.Link>
+        <Navbar.Link href="#">Services</Navbar.Link>
+        <Navbar.Link href="#">Pricing</Navbar.Link>
+        <Navbar.Link href="#">Contact</Navbar.Link>
+      </Navbar.Collapse>
+    </Navbar>
   );
 };
 
