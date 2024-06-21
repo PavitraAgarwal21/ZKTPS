@@ -94,7 +94,7 @@ export default function CreateEvent() {
   }
   return (
     <div>
-      <div className="flex justify-center" style={{ marginTop: "300px" }}>
+      <div className="flex justify-center h-full items-center">
         <Button color="light" onClick={() => setModalIsOpen(true)}>
           Create Event
         </Button>

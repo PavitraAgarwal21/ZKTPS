@@ -3,6 +3,7 @@ import { getL2contractRead } from "../web3/web3";
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput } from "flowbite-react";
 import { LoadingContext } from "../useContext/LoadingContext";
+import { toast } from "react-toastify";
 export default function JoinEvent() {
   const history = useNavigate();
   const { setLoading } = useContext(LoadingContext);
@@ -13,7 +14,8 @@ export default function JoinEvent() {
     const tx = await contract.getEventdetails(event_index);
     console.log(tx);
     if (tx.creator == "0") {
-      alert("Invalid event_index");
+      toast.error("Invalid event_index");
+      setLoading(false);
       return;
     } else {
       setLoading(false);
@@ -21,7 +23,7 @@ export default function JoinEvent() {
     }
   }
   return (
-    <div>
+    <div className="space-y-4 flex justify-center flex-col items-center h-full">
       <TextInput id="eventId" placeholder="Enter Event Index" required />
       <Button color="light" onClick={join_event}>
         Join Event
