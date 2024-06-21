@@ -11,6 +11,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [event_creation, setEvent_creation] = useState(false);
   const [status, setStatus] = useState(false);
+  const [index, setIndex] = useState(null);
   async function connectWalletL2() {
     const { wallet } = await connect({
       provider: new RpcProvider({
@@ -34,6 +35,8 @@ function App() {
         setEvent_creation,
         status,
         setStatus,
+        index,
+        setIndex,
       }}
     >
       <div className="App">

@@ -40,7 +40,11 @@ function BuyTicket() {
       event_index
     );
     const amount = event_price;
-    await approve(account, amount);
+    let status = await approve(account, amount, toHex(token_address));
+    if (status != true) {
+      toast.error("failed to approve");
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 5000));
     const secret = random();
     const nullifier = random();
@@ -69,9 +73,9 @@ function BuyTicket() {
         event_name,
         account.address
       );
-      toast.error("ticket bought successfully");
+      toast.success("ticket bought successfully");
     } catch (error) {
-      toast.error(error);
+      toast.error("transaction failed");
     }
   }
   return (

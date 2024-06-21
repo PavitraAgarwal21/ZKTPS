@@ -9,7 +9,7 @@ import { Button, Navbar } from "flowbite-react";
 const Header = () => {
   const [display, setDisplay] = useState(null);
   //   const [account, setAccount] = useState(null);
-  const { account, setAccount, status } = useContext(storeContext);
+  const { account, setAccount, status, index } = useContext(storeContext);
   const truncateWalletAddress = async (address, length = 4) => {
     if (!address) return "";
     const start = address.substring(0, length);
@@ -62,16 +62,22 @@ const Header = () => {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link href="/" active>
-          Home
-        </Navbar.Link>
+        {status ? (
+          <Link to={`/home/${index}`} active>
+            Home
+          </Link>
+        ) : (
+          <Link to="/" active>
+            Home
+          </Link>
+        )}
         {status && (
           <>
-            <Navbar.Link href="#">Verify Ticket</Navbar.Link>
-            <Navbar.Link href="#">Invalidate Ticket</Navbar.Link>
+            <Link to={`/home/${index}/verify`}>Verify Ticket</Link>
+            <Link href="#">Invalidate Ticket</Link>
           </>
         )}
-        <Navbar.Link href="#">Info</Navbar.Link>
+        <Link href="#">Info</Link>
       </Navbar.Collapse>
     </Navbar>
   );

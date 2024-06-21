@@ -7,7 +7,8 @@ import { storeContext } from "../useContext/storeContext";
 const EventRoute = (props) => {
   const { event_index } = useParams();
   const [isValid, setIsValid] = useState(null);
-  const { event_creation, setStatus } = useContext(storeContext);
+  const { event_creation, setStatus ,setIndex} = useContext(storeContext);
+  setIndex(event_index);
   useEffect(() => {
     const checkEventIndex = async () => {
       if (!event_creation) {
