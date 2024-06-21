@@ -10,6 +10,7 @@ function App() {
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(false);
   const [event_creation, setEvent_creation] = useState(false);
+  const [status, setStatus] = useState(false);
   async function connectWalletL2() {
     const { wallet } = await connect({
       provider: new RpcProvider({
@@ -31,6 +32,8 @@ function App() {
         setLoading,
         event_creation,
         setEvent_creation,
+        status,
+        setStatus,
       }}
     >
       <div className="App">
