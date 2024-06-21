@@ -41,7 +41,7 @@ const EventRoute = (props) => {
     return <Navigate to="/error" />; // Adjust the path as necessary
   }
 
-  return <BuyTicket account={props.account} />;
+  return <BuyTicket/>;
 };
 
 export default EventRoute;
