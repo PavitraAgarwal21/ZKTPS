@@ -6,8 +6,9 @@ import {
   getDetails,
   getL2contract,
   get_token_name,
-  toHex, 
-  fetchData
+  toHex,
+  fetchData,
+  toDecimal,
 } from "../web3/web3";
 import { CreateTicketQR } from "../utils/createTicketQR";
 import { downloadTicket } from "../utils/downloadTicket";
@@ -78,26 +79,12 @@ function BuyTicket() {
       );
 
       const transactionHash = tx2.transaction_hash;
-      console.log(`transaction hash - ${transactionHash}`); 
-      let data = await fetchData(transactionHash);
-      let buyer = data[0].value ; 
-      let ticketEventIndex = data[1].value ; 
-      let creatorOfTicket = data[1].value ; 
-      let commitment = data[1].value ; 
-      let nullifier = data[1].value ; 
-      console.log(`buyer - ${buyer} ticketEventIndex - ${ticketEventIndex} creatorOfTicket - ${creatorOfTicket} commitment - ${commitment} nullifier - ${nullifier}`);
-      // event emit values creator of the  event and their event inde 
-
-      
-      
-      
-      
-
-
+      console.log(`transaction hash - ${transactionHash}`);
+      let data = await fetchData(transactionHash, 3);
+      console.log(data);
       const noteString = `${nullifier},${secret},${nullifier_hash},${commitment_hash},${event_index},${amount},${token_address}`;
       const qrDataURL = await CreateTicketQR(noteString);
       const token_name = get_token_name(token_address);
-      await new Promise((resolve) => setTimeout(resolve, 5000));
       setLoading(false);
       downloadTicket(
         qrDataURL,

@@ -1,5 +1,10 @@
 import { shortString } from "starknet";
-import { getL2contract, getL2provider, get_token_address  , fetchData } from "../web3/web3";
+import {
+  getL2contract,
+  getL2provider,
+  get_token_address,
+  fetchData,
+} from "../web3/web3";
 import random from "../utils/random";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
@@ -27,9 +32,6 @@ const customStyles = {
   },
 };
 
-
-
-
 export default function CreateEvent() {
   const history = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -53,7 +55,6 @@ export default function CreateEvent() {
     closeModal();
   };
   const { account, setEvent_creation } = useContext(storeContext);
-
 
   async function create_event() {
     setLoading(true);
@@ -82,37 +83,21 @@ export default function CreateEvent() {
       );
       //console.log(tx);
       // await new Promise((resolve) => setTimeout(resolve, 3000));
-      
-      
-    
-const transactionHash = tx.transaction_hash;
-console.log(`transaction hash - ${transactionHash}`); 
-let data = await fetchData(transactionHash);
-let creator = data[0].value ; 
-let eventIndex = data[1].value ; // in the hex value 
-// event emit values creator of the  event and their event inde 
-console.log(`creator - ${creator} eventIndex - ${eventIndex}`); 
 
-
-
-
-
-
+      const transactionHash = tx.transaction_hash;
+      console.log(`transaction hash - ${transactionHash}`);
+      let data = await fetchData(transactionHash, 2);
+      let creator = data[0].value;
+      let eventIndex = data[1].value; // in the hex value
+      // event emit values creator of the  event and their event inde
+      console.log(`creator - ${creator} eventIndex - ${eventIndex}`);
       // Example usage with user input (you can replace this with your actual input handling logic)
-     
-
-      
-      // const txReceipt = await provider.waitForTransaction(transactionHash);
-      // console.log(txReceipt);
-      // const listEvents = txReceipt.events;
-      // console.log(listEvents);
     } catch (error) {
       setEvent_creation(false);
       setLoading(false);
       toast.error("error in creating event");
       return;
     }
-    await new Promise((resolve) => setTimeout(resolve, 5000));
     setLoading(false);
     toast.success("Event created successfully");
     history(`home/${event_index}`);
