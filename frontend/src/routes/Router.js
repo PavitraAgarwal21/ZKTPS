@@ -4,7 +4,7 @@ import Initial from "../components/Initial";
 import InvalidateTicket from "../components/invalidateTicket";
 import VerifyTicket from "../components/verifyTicket";
 import AllowResale from "../components/allowResale";
-const Router = (props) => {
+const Router = () => {
   return (
     <Routes>
       <Route path="/" element={<Initial />} />

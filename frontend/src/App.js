@@ -6,6 +6,7 @@ import Router from "./routes/Router";
 import Header from "./components/Header";
 import { storeContext } from "./useContext/storeContext";
 import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,7 +42,7 @@ function App() {
     >
       <div className="App">
         <Header />
-        <Router account={account} />={" "}
+        <Router />
       </div>
     </storeContext.Provider>
   );
