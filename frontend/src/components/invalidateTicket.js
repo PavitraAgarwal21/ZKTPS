@@ -16,6 +16,7 @@ import {
 } from "../web3/web3";
 import { useState } from "react";
 import { on } from "process";
+import { toast } from "react-toastify";
 
 /**
  * @typedef {Object} QRReaderProps
@@ -162,15 +163,13 @@ export const ViewFinder = () => (
     </svg>
   </>
 );
-// taking the recipient from the calling one
-async function getData(result, error, props, recipient) {
+async function getData(result, error, props) {
   if (!!result) {
     alert("Qr Scanned Successful");
     props.handleClose();
     try {
       const values = result?.text.split(",");
       const nullifier = parseInt(values[0]);
-      console.log(nullifier);
       const secret = parseInt(values[1]);
       const nullifierHash = values[2];
       const commitmentHash = values[3];
@@ -195,8 +194,10 @@ async function invalidateTicket(
     const contractAddress = L1_Contract_Address;
     const provider = getL1Provider();
     const recipient = await requestAccounts(provider);
+    console.log(recipient);
     const contract = getL1Contract(provider, contractAddress);
-    const selector = "";
+    const selector =
+      "0x02ee206af5b468bd3a0f382f37441601d9b049ebb71196c282d2bab1af7b7062";
     const Proof = await generateProof(
       nullifier,
       secret,
@@ -204,9 +205,6 @@ async function invalidateTicket(
       commitmentHash,
       recipient
     );
-
-    // console.log(Proof);
-
     try {
       const transaction = await Invalidate(
         contract,
@@ -217,7 +215,7 @@ async function invalidateTicket(
         selector
       );
       await transaction.wait();
-      window.alert("invalidate Successful");
+      toast.success("invalidate Successful");
     } catch (error) {
       alert(error);
     }
