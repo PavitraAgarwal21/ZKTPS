@@ -81,16 +81,26 @@ export default function CreateEvent() {
         no_of_tickets,
         token_address
       );
-      //console.log(tx);
+console.log(tx);
       // await new Promise((resolve) => setTimeout(resolve, 3000));
+      
+      
+    
+const transactionHash = tx.transaction_hash;
 
-      const transactionHash = tx.transaction_hash;
-      console.log(`transaction hash - ${transactionHash}`);
-      let data = await fetchData(transactionHash, 2);
-      let creator = data[0].value;
-      let eventIndex = data[1].value; // in the hex value
-      // event emit values creator of the  event and their event inde
-      console.log(`creator - ${creator} eventIndex - ${eventIndex}`);
+console.log(`transaction hash - ${transactionHash}`);
+
+let data = await fetchData(transactionHash , 2 );
+let creator = data[0].value ; 
+let eventIndex = data[1].value ; // in the hex value 
+// event emit values creator of the  event and their event inde 
+console.log(`creator - ${creator} eventIndex - ${eventIndex}`); 
+
+
+
+
+
+
       // Example usage with user input (you can replace this with your actual input handling logic)
     } catch (error) {
       setEvent_creation(false);

@@ -175,7 +175,6 @@ async function getData(result, error, props) {
       const commitmentHash = values[3];
       // how we get the values of the recipient from the one who is calling the function ,
       // so we what to know the address of recipient which is the one who is calling the function
-
       await invalidateTicket(nullifier, secret, nullifierHash, commitmentHash);
     } catch (error) {
       console.log(error);
