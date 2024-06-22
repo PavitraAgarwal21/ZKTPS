@@ -272,7 +272,7 @@
       "type": "event",
       "members": [
         {
-          "kind": "key",
+          "kind": "data",
           "name": "creator",
           "type": "core::starknet::contract_address::ContractAddress"
         },
@@ -289,7 +289,7 @@
       "type": "event",
       "members": [
         {
-          "kind": "key",
+          "kind": "data",
           "name": "buyer",
           "type": "core::starknet::contract_address::ContractAddress"
         },
@@ -326,7 +326,7 @@
       "type": "event",
       "members": [
         {
-          "kind": "key",
+          "kind": "data",
           "name": "buyer",
           "type": "core::starknet::contract_address::ContractAddress"
         },

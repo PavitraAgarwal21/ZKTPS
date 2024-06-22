@@ -1,5 +1,5 @@
 import { shortString } from "starknet";
-import { getL2contract, getL2provider, get_token_address } from "../web3/web3";
+import { getL2contract, getL2provider, get_token_address  , fetchData } from "../web3/web3";
 import random from "../utils/random";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
@@ -26,6 +26,10 @@ const customStyles = {
     transform: "none",
   },
 };
+
+
+
+
 export default function CreateEvent() {
   const history = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -49,6 +53,8 @@ export default function CreateEvent() {
     closeModal();
   };
   const { account, setEvent_creation } = useContext(storeContext);
+
+
   async function create_event() {
     setLoading(true);
     let token_address = get_token_address(selectedToken);
@@ -74,9 +80,28 @@ export default function CreateEvent() {
         no_of_tickets,
         token_address
       );
-      console.log(tx);
-      // const transactionHash = tx.transaction_hash;
-      // console.log(transactionHash);
+      //console.log(tx);
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
+      
+      
+    
+const transactionHash = tx.transaction_hash;
+console.log(`transaction hash - ${transactionHash}`); 
+let data = await fetchData(transactionHash);
+let creator = data[0].value ; 
+let eventIndex = data[1].value ; // in the hex value 
+// event emit values creator of the  event and their event inde 
+console.log(`creator - ${creator} eventIndex - ${eventIndex}`); 
+
+
+
+
+
+
+      // Example usage with user input (you can replace this with your actual input handling logic)
+     
+
+      
       // const txReceipt = await provider.waitForTransaction(transactionHash);
       // console.log(txReceipt);
       // const listEvents = txReceipt.events;

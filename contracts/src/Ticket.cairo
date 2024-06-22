@@ -44,9 +44,7 @@ mod Ticket {
     use starknet::{ContractAddress, get_caller_address, get_contract_address,storage_access::StorageBaseAddress}; 
     use super::IERC20DispatcherTrait;
     use super::IERC20Dispatcher;
-    
     use super::IGetTicket ; 
-
     #[storage]
     struct Storage 
     {
@@ -54,8 +52,6 @@ mod Ticket {
     TicketCommitments : LegacyMap::<u256 , TicketCommitment > ,
     nullifierHashes : LegacyMap::<u256 , bool>  ,
     }
-    
-
     #[derive(Drop, Serde , starknet::Store)] 
     pub struct TicketEvent {
         creator : ContractAddress ,
@@ -70,10 +66,7 @@ mod Ticket {
         ticketEventIndex : u256 ,
         used : bool ,
         resale : bool ,
-
     }
-
-
 // creating the event there are two events 
 #[event]
 #[derive(Drop, starknet::Event)]
@@ -82,17 +75,13 @@ enum Event {
     inValidatedTicket : inValidatedTicket ,
     buyingTicket : buyingTicket ,
 }
-
 #[derive(Drop , Serde , starknet::Event)] 
 struct newTicketEvent { 
-    #[key]
     creator : ContractAddress ,
     ticketEventIndex : u256 ,
 }
-
 #[derive(Drop , Serde , starknet::Event)] 
 struct inValidatedTicket { 
-    #[key]
     buyer : ContractAddress ,
     ticketEventIndex : u256 ,
     creatorOfTicket : ContractAddress ,
@@ -100,16 +89,15 @@ struct inValidatedTicket {
     nullifierhash : u256 , 
     fromAddress : felt252  
 }
-
 #[derive(Drop , Serde , starknet::Event)] 
 struct buyingTicket { 
-    #[key]
     buyer : ContractAddress ,
     ticketEventIndex : u256 ,
     creatorOfTicket : ContractAddress ,
     commitment  : u256 ,
     nullifierhash : u256 , 
 }
+
 
 #[abi(embed_v0)]
     impl  Ticket of IGetTicket<ContractState> 
@@ -137,7 +125,6 @@ struct buyingTicket {
                 creator : get_caller_address() ,
                 ticketEventIndex : eventIndex ,
             });
-
         } 
         fn calculateFees(self : @ContractState ,  _ticketPrice : u256  ) -> (u256 , u256)  {
             let fees = _ticketPrice/100 ;
@@ -145,18 +132,14 @@ struct buyingTicket {
             (fees , total ) 
         } 
         fn buyTicket(ref self : ContractState , event_index : u256 , commitment : u256 , token_address:ContractAddress ) {
-
             let token=IERC20Dispatcher{contract_address:token_address};
             let contract_address=get_contract_address();
             let caller=get_caller_address();
             let price=self.ticketEvents.read(event_index).price;
-            assert(token.allowance(caller,contract_address)>=price,'allow first');
-            
-            
+            assert(token.allowance(caller,contract_address)>=price,'allow first');   
             // tranfering the total token from the user to the this contract 
             let status=token.transfer_from(caller,contract_address,price);
             assert(status==true,'transfer failed');
-
             let ticket_commitment  = TicketCommitment {
                 buyer : caller ,
                 ticketEventIndex : event_index ,
@@ -164,12 +147,10 @@ struct buyingTicket {
                 resale : false 
             };
             self.TicketCommitments.write(commitment , ticket_commitment);
-            
             self.ticketEvents.write(event_index, TicketEvent {
                 noOfTicketAvl: self.ticketEvents.read(event_index).noOfTicketAvl - 1 , 
                 ..self.ticketEvents.read(event_index),
             });
-
             self.emit(buyingTicket {
                 buyer : caller ,
                 ticketEventIndex : event_index ,
@@ -177,17 +158,17 @@ struct buyingTicket {
                 commitment : commitment ,
                 nullifierhash : commitment , 
             });
-
             let event_creator = self.ticketEvents.read(event_index).creator;
             let status=token.transfer(event_creator,price);
             assert(status==true,'invalid');
             }
 
+
+
 fn verifyTicket( self : @ContractState,  
             _commitment : u256 ,
             _nullifierhash : u256
         ) -> bool {
-
             if (self.nullifierHashes.read(_nullifierhash)) {
                 return false ; 
             
@@ -244,7 +225,6 @@ fn buyResaleTicket(ref self : ContractState , newCommitment : u256 , oldNullifie
             let status=token.transfer_from(get_caller_address(),get_contract_address(),total);
             assert(status==true,'transfer failed');
         // allowance of the token to this fucntion should be total 
-
 // invalidate the ticket // or mark them that it has been used 
 self.TicketCommitments.write(oldCommitment , TicketCommitment {
     used : false ,
