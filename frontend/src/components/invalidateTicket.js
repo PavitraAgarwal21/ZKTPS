@@ -189,6 +189,7 @@ async function invalidateTicket(
   commitmentHash
 ) {
   try {
+    console.log(commitmentHash);
     await connectWalletL1();
     const contractAddress = L1_Contract_Address;
     const provider = getL1Provider();
@@ -204,6 +205,7 @@ async function invalidateTicket(
       commitmentHash,
       recipient
     );
+    console.log(Proof);
     try {
       const transaction = await Invalidate(
         contract,
@@ -239,6 +241,5 @@ export default function InvalidateTicket() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-    

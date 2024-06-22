@@ -26,7 +26,8 @@ const Header = () => {
   useEffect(() => {
     const connect = async () => {
       if (primaryWallet) {
-        setAccount(true);
+        const signer = await primaryWallet.connector.getSigner();
+        setAccount(signer);
         truncateWalletAddress(primaryWallet.address);
       }
     };

@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <DynamicContextProvider
     settings={{
-      environmentId: "0fc1b363-c12d-4727-a8b4-5cbe751f088d",
+      environmentId: "23cee492-ceb0-4f38-8bbe-986290e4dd80",
       walletConnectors: [StarknetWalletConnectors],
       initialAuthenticationMode: "connect-only",
       events: {

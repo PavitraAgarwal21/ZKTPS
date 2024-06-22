@@ -69,10 +69,10 @@ function BuyTicket(props) {
       let ticketEventIndex = data[1].value;
       let creatorOfTicket = data[2].value;
       let commitment = data[3].value;
-      let nullifier = data[4].value;
+      let _nullifier = data[4].value;
 
       console.log(
-        `buyer - ${buyer} ticketEventIndex - ${ticketEventIndex} creatorOfTicket - ${creatorOfTicket} commitment - ${commitment} nullifier - ${nullifier}`
+        `buyer - ${buyer} ticketEventIndex - ${ticketEventIndex} creatorOfTicket - ${creatorOfTicket} commitment - ${commitment} nullifier - ${_nullifier}`
       );
       // event emit values creator of the  event and their event inde
 
