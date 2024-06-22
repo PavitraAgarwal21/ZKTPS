@@ -8,21 +8,27 @@ import Button from "@mui/material/Button";
 import { Invalidate, getL2contract, getL2provider, toHex } from "../web3/web3";
 import { useState } from "react";
 import { on } from "process";
+import { nullifierHash } from "../utils/createHash";
+// const { MongoClient } = require("mongodb");
 
-/**
- * @typedef {Object} QRReaderProps
- * @property {(d: string) => void} setData - Function to set the scanned data
- * @property {(msg: string) => void} handleError - Function to handle errors
- * @property {() => void} handleClose - Function to handle the close event
- */
+// async function connectmongoDB() {
+//   const uri = "mongodb+srv://agarwalpavitra3000:eeyPoKbnsQGiYAR1@allowresale.nfcdiym.mongodb.net/?retryWrites=true&w=majority&appName=ALLOWRESALE";
+// const client = new MongoClient(uri);
+// await client.connect();
+// const dbName = "AllowResaleInfo";
+// const collectionName = "allows";
+// const database = client.db(dbName);
+// const collection = database.collection(collectionName);
+// return collection; 
+// }
 
-// Usage example
-/**
- * @param {QRReaderProps} props
- */
 
-let account;
-const QRReader = (props) => {
+
+export default function AllowResale(props) {
+const account = props.account ; 
+
+const QRReader = (props ) => {
+  console.log(props) ;
   const facingMode = isMobile ? "environment" : "user";
   return (
     <div style={{ width: "100%" }}>
@@ -30,26 +36,14 @@ const QRReader = (props) => {
         ViewFinder={ViewFinder}
         constraints={{ facingMode }}
         onResult={async (result, error) => {
-          await getData(result, error, props, props.account);
+          await getData(result, error, props , props.account );
         }}
       />
     </div>
   );
 };
 
-/**
- * @typedef {Object} ScanNoteDialogProps
- * @property {boolean} open - Indicates if the dialog is open
- * @property {() => void} onClose - Function to handle the close event
- * @property {(d: string) => void} setData - Function to set the scanned data
- * @property {(msg: string) => void} handleError - Function to handle errors
- * @property {string} dialogTitle - The title of the dialog
- */
 
-// Usage example
-/**
- * @param {ScanNoteDialogProps} props
- */
 function ScanNoteDialog(props) {
   const { onClose, open } = props;
 
@@ -60,27 +54,17 @@ function ScanNoteDialog(props) {
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>{props.dialogTitle}</DialogTitle>
-      <QRReader
+      <QRReader 
         handleClose={handleClose}
         setData={props.setData}
         handleError={props.handleError}
+        account = {props.account}
+
       ></QRReader>
     </Dialog>
   );
 }
-
-/**
- * @typedef {Object} ScanNoteButtonProps
- * @property {(d: string) => void} setData - Function to set the scanned data
- * @property {(msg: string) => void} handleError - Function to handle errors
- * @property {string} dialogTitle - The title of the dialog
- */
-
-// Usage example
-/**
- * @param {ScanNoteButtonProps} props
- */
-export function ScanNoteButton3(props) {
+ function ScanNoteButton3(props) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -112,7 +96,7 @@ export function ScanNoteButton3(props) {
     </div>
   );
 }
-export const ViewFinder = () => (
+const ViewFinder = () => (
   <>
     <svg
       width="50px"
@@ -157,7 +141,7 @@ export const ViewFinder = () => (
 );
 
 // taking the recipient from the calling one
-async function getData(result, error, props) {
+async function getData(result, error, props  ) {
   if (!!result) {
     alert("Qr Scanned Successful");
     props.handleClose();
@@ -166,35 +150,57 @@ async function getData(result, error, props) {
       // const nullifier = parseInt(values[0]);
       // console.log(nullifier);
       // const secret = parseInt(values[1]);
-      const nullifierHash = values[2];
-      const commitmentHash = values[3];
+      // console.log(values[2]); 
+      const nullifierHash = toHex(values[2]);
+      // console.log(nullifierHash);
+      const commitmentHash = toHex(values[3]);
+      
       //   console.log(props.account) ;
 
       // how we get the values of the recipient from the one who is calling the function ,
       // so we what to know the address of recipient which is the one who is calling the function
-      await allowResale(nullifierHash, commitmentHash);
+      await allowResale(nullifierHash, commitmentHash );
+
     } catch (error) {
       console.log(error);
     }
   }
 }
 
+
 async function allowResale(nullifierhash, commitmentHash) {
   try {
-    const contract = getL2contract(account);
+
+
+
+    console.log(account) ;
+   let  contract = getL2contract(account);
     let txn = await contract.approveToTicketResale(
-      toHex(commitmentHash),
-      toHex(nullifierhash)
+      commitmentHash,
+      nullifierhash
     );
+    console.log(nullifierhash) ;
     console.log(txn);
 
+    try {
+      // const collection = await connectmongoDB();
+      const allowTicket = 
+      {
+      "old_nullifier" : `${nullifierhash}`, 
+      "old_commitment": `${commitmentHash}`
+      } 
+    console.log(allowTicket)
+    }catch (error) {
+      // error in the database ; 
+      alert(error);
+    }
     // store this ticket in the datababase
   } catch (error) {
-    alert(error);
+    alert(`error in deployment ${error} `);
   }
 }
 
-export default function AllowResale() {
+
   return (
     <div className="container mx-auto mt-64 flex flex-col items-center justify-center">
       <h2 className="font-bold text-white">Scan Here</h2>
@@ -207,7 +213,7 @@ export default function AllowResale() {
       <div className="flex flex-col items-center mt-4">
         <h3 className="text-white">Resale Ticket</h3>
         <div className="flex justify-center mt-4">
-          <ScanNoteButton3 dialogTitle="Scan for Ticket Reselling" />
+          <ScanNoteButton3   dialogTitle="Scan for Ticket Reselling" />
         </div>
       </div>
     </div>
