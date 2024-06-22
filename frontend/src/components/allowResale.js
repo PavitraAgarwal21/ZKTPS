@@ -5,12 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import { isMobile } from "react-device-detect";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
-import {
-  Invalidate,
-  getL2contract,
-  getL2provider,
-  toHex,
-} from "../web3/web3";
+import { Invalidate, getL2contract, getL2provider, toHex } from "../web3/web3";
 import { useState } from "react";
 import { on } from "process";
 
@@ -26,7 +21,7 @@ import { on } from "process";
  * @param {QRReaderProps} props
  */
 
-let account ; 
+let account;
 const QRReader = (props) => {
   const facingMode = isMobile ? "environment" : "user";
   return (
@@ -35,7 +30,7 @@ const QRReader = (props) => {
         ViewFinder={ViewFinder}
         constraints={{ facingMode }}
         onResult={async (result, error) => {
-          await getData(result, error, props , props.account );
+          await getData(result, error, props, props.account);
         }}
       />
     </div>
@@ -85,10 +80,7 @@ function ScanNoteDialog(props) {
 /**
  * @param {ScanNoteButtonProps} props
  */
-export default function ScanNoteButton3(props) {
-   
-    account = props.account ;
-
+export function ScanNoteButton3(props) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -164,44 +156,60 @@ export const ViewFinder = () => (
   </>
 );
 
-
-
-
-// taking the recipient from the calling one 
-async function getData(result, error, props ) {
+// taking the recipient from the calling one
+async function getData(result, error, props) {
   if (!!result) {
-
     alert("Qr Scanned Successful");
     props.handleClose();
     try {
-
       const values = result?.text.split(",");
       // const nullifier = parseInt(values[0]);
       // console.log(nullifier);
       // const secret = parseInt(values[1]);
       const nullifierHash = values[2];
       const commitmentHash = values[3];
-    //   console.log(props.account) ;
+      //   console.log(props.account) ;
 
-      // how we get the values of the recipient from the one who is calling the function , 
-      // so we what to know the address of recipient which is the one who is calling the function 
+      // how we get the values of the recipient from the one who is calling the function ,
+      // so we what to know the address of recipient which is the one who is calling the function
       await allowResale(nullifierHash, commitmentHash);
-
     } catch (error) {
       console.log(error);
     }
   }
 }
 
-async function allowResale( nullifierhash , commitmentHash) {
+async function allowResale(nullifierhash, commitmentHash) {
   try {
     const contract = getL2contract(account);
-    let txn = await contract.approveToTicketResale(toHex(commitmentHash) , toHex(nullifierhash) );
-    console.log(txn); 
+    let txn = await contract.approveToTicketResale(
+      toHex(commitmentHash),
+      toHex(nullifierhash)
+    );
+    console.log(txn);
 
-    // store this ticket in the datababase 
-
+    // store this ticket in the datababase
   } catch (error) {
     alert(error);
   }
+}
+
+export default function AllowResale() {
+  return (
+    <div className="container mx-auto mt-64 flex flex-col items-center justify-center">
+      <h2 className="font-bold text-white">Scan Here</h2>
+      <p className="text-white">
+        <span className="font-bold">Disclaimer! </span>
+        Here you can scan the original ticket and can opt for resale!! This
+        ticket will be available for resale and anyone can buy it if interested
+        You will get your funds back on successful buying of ticket.
+      </p>
+      <div className="flex flex-col items-center mt-4">
+        <h3 className="text-white">Resale Ticket</h3>
+        <div className="flex justify-center mt-4">
+          <ScanNoteButton3 dialogTitle="Scan for Ticket Reselling" />
+        </div>
+      </div>
+    </div>
+  );
 }

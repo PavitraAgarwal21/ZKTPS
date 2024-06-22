@@ -73,8 +73,9 @@ const Header = () => {
         )}
         {status && (
           <>
-            <Link to={`/verify`}>Verify Ticket</Link>
-            <Link to={`/invalidate`}>Invalidate Ticket</Link>
+            <Link to="/verify">Verify Ticket</Link>
+            <Link to="/invalidate">Invalidate Ticket</Link>
+            <Link to="/resale">Resale Tickets</Link>
           </>
         )}
         <Link href="#">Info</Link>

@@ -4,7 +4,7 @@ import BuyTicket from "../components/buyTicket";
 import { getDetails } from "../web3/web3";
 import { storeContext } from "../useContext/storeContext";
 import BeatLoader from "react-spinners/BeatLoader";
-const EventRoute = (props) => {
+const EventRoute = () => {
   const { event_index } = useParams();
   const [isValid, setIsValid] = useState(null);
   const [loading, setLoading] = useState(false);

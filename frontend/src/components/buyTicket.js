@@ -30,6 +30,7 @@ function BuyTicket() {
   };
   useEffect(() => {
     async function fetchDetails() {
+      setLoading(true);
       const { event_price, event_name, token_address } = await getDetails(
         event_index
       );
@@ -38,10 +39,15 @@ function BuyTicket() {
       const t_name = get_token_name(token_address);
       setTName(t_name);
       setAddress(token_address);
+      setLoading(false);
     }
     fetchDetails();
   }, []);
   async function buy_ticket() {
+    if (account == null) {
+      toast.error("Connect Wallet first");
+      return;
+    }
     const { event_price, event_name, token_address } = await getDetails(
       event_index
     );
@@ -93,7 +99,7 @@ function BuyTicket() {
       {loading ? (
         <>
           <BeatLoader color="#ffffff" cssOverride={override} />
-          <p className="text-white">Waiting for transaction...</p>
+          <p className="text-white">Fetching...</p>
         </>
       ) : (
         <div className="flex flex-col justify-center items-center h-full">
