@@ -35,6 +35,7 @@ const EventRoute = (props) => {
           setIsValid(false);
         }
       } else {
+        setStatus(true);
         setIsValid(true);
       }
     };

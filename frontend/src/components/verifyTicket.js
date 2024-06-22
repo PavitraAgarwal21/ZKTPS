@@ -26,7 +26,6 @@ import { on } from "process";
  * @param {QRReaderProps} props
  */
 
-
 const QRReader = (props) => {
   const facingMode = isMobile ? "environment" : "user";
   return (
@@ -161,11 +160,8 @@ export const ViewFinder = () => (
   </>
 );
 
-
-
-
-// taking the recipient from the calling one 
-async function getData(result, error, props , recipient) {
+// taking the recipient from the calling one
+async function getData(result, error, props) {
   if (!!result) {
     alert("Qr Scanned Successful");
     props.handleClose();
@@ -177,58 +173,53 @@ async function getData(result, error, props , recipient) {
       const nullifierHash = values[2];
       const commitmentHash = values[3];
 
-
-      // how we get the values of the recipient from the one who is calling the function , 
-      // so we what to know the address of recipient which is the one who is calling the function 
-      await verifyTicket(props,nullifierHash, commitmentHash);
-    
-    
+      // how we get the values of the recipient from the one who is calling the function ,
+      // so we what to know the address of recipient which is the one who is calling the function
+      await verifyTicket(nullifierHash, commitmentHash);
     } catch (error) {
       console.log(error);
     }
   }
 }
 
-async function verifyTicket(props,nullifierHash, commitmentHash) {
+async function verifyTicket(nullifierHash, commitmentHash) {
   try {
-    // connect the l2 wallet and get their contract address 
+    // connect the l2 wallet and get their contract address
 
+    const contract = getL2contractRead();
 
-  
-    const contract = getL2contractRead(); 
+    // currently what the nullifier is we get the true // but with the commitment it get correct
+    // do that we can change in the contract of the veifyTicket
+    // changed it to
+    // fn verifyTicket( self : @ContractState,
+    //   _commitment : u256 ,
+    //   _nullifierhash : u256
+    // ) -> bool {
 
+    //   if (self.nullifierHashes.read(_nullifierhash)) {
+    //       return false ;
 
+    //   }
+    //   if (!self.TicketCommitments.read(_commitment).used) {
+    //       return false ;
+    //   }
+    //   return true ;
+    // }
 
-// currently what the nullifier is we get the true // but with the commitment it get correct 
-// do that we can change in the contract of the veifyTicket 
-// changed it to 
-// fn verifyTicket( self : @ContractState,  
-//   _commitment : u256 ,
-//   _nullifierhash : u256
-// ) -> bool {
-
-//   if (self.nullifierHashes.read(_nullifierhash)) {
-//       return false ; 
-  
-//   }
-//   if (!self.TicketCommitments.read(_commitment).used) {
-//       return false ; 
-//   }
-//   return true ;  
-// }
-
-try {
-    let txn = await contract.verifyTicket(toHex(commitmentHash), toHex(nullifierHash));
-    console.log(txn);
-    if (txn == true) {
-      alert("Ticket is valid");
-    } else {
-      alert("Ticket is invalid");
+    try {
+      let txn = await contract.verifyTicket(
+        toHex(commitmentHash),
+        toHex(nullifierHash)
+      );
+      console.log(txn);
+      if (txn == true) {
+        alert("Ticket is valid");
+      } else {
+        alert("Ticket is invalid");
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }catch(error) { 
-    console.log(error);
-  }
-
   } catch (error) {
     console.log(error);
   }
