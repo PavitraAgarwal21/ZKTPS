@@ -12,7 +12,7 @@ pub trait IGetTicket<TContractState>
         _commitment : u256 ,
         _nullifierhash : u256
     ) -> bool ;
-    fn approveToTicketResale(ref self : TContractState , _commitment : u256 , _nullifierhash : u256 ) ; 
+    fn approveToTicketResale(ref self : TContractState , _commitment : u256 , _nullifierhash : u256 )   ; 
     fn buyResaleTicket(ref self : TContractState  , newCommitment : u256 , oldNullifier : u256 , oldCommitment : u256 ) ;
 }
 #[starknet::interface]
@@ -95,7 +95,6 @@ struct buyingTicket {
     ticketEventIndex : u256 ,
     creatorOfTicket : ContractAddress ,
     commitment  : u256 ,
-    nullifierhash : u256 , 
 }
 
 
@@ -151,16 +150,17 @@ struct buyingTicket {
                 noOfTicketAvl: self.ticketEvents.read(event_index).noOfTicketAvl - 1 , 
                 ..self.ticketEvents.read(event_index),
             });
+            
+            let event_creator = self.ticketEvents.read(event_index).creator;
+            let status=token.transfer(event_creator,price);
+            assert(status==true,'invalid');
+            
             self.emit(buyingTicket {
                 buyer : caller ,
                 ticketEventIndex : event_index ,
                 creatorOfTicket : self.ticketEvents.read(event_index).creator ,
                 commitment : commitment ,
-                nullifierhash : commitment , 
             });
-            let event_creator = self.ticketEvents.read(event_index).creator;
-            let status=token.transfer(event_creator,price);
-            assert(status==true,'invalid');
             }
 
 
@@ -188,7 +188,7 @@ fn verifyTicket( self : @ContractState,
 // to know the actual owner of the ticket there is 2 ways 
 //1 provide the proof and then verify the proof but it take the l2tol1 messaging 
 //2 the origin owner of the ticket address is same as the one who calling the this approve to resale the ticket 
-fn approveToTicketResale(ref self : ContractState , _commitment : u256 , _nullifierhash : u256 ) {
+fn approveToTicketResale(ref self : ContractState , _commitment : u256 , _nullifierhash : u256 )  {
     assert(self.verifyTicket(_commitment , _nullifierhash) , 'ticket is not valid');
     let caller = get_caller_address();
     assert(self.TicketCommitments.read(_commitment).buyer == caller , 'unauthorized ticket owner');
@@ -198,7 +198,6 @@ fn approveToTicketResale(ref self : ContractState , _commitment : u256 , _nullif
         ..self.TicketCommitments.read(_commitment)
     });
 // this ticket is now available for the resale   
-
     // transfer the token to the buyer of the ticket
 }
 
@@ -259,6 +258,13 @@ let status= token.transfer(event.creator , fees);
 assert(status==true,'transfer failed event creator');
 
 // emit event that the ticket is resaled sucessfully 
+
+self.emit(buyingTicket {
+    buyer :get_caller_address()  ,
+    ticketEventIndex : event_index ,
+    creatorOfTicket : self.ticketEvents.read(event_index).creator ,
+    commitment : newCommitment ,
+});
 
 }
 

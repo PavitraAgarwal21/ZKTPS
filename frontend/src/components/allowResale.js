@@ -5,7 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import { isMobile } from "react-device-detect";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
-import { Invalidate, getL2contract, getL2provider, toHex } from "../web3/web3";
+import { Invalidate, getL2contract, getL2provider, toHex , apiurl} from "../web3/web3";
 import { useState } from "react";
 import { on } from "process";
 import { nullifierHash } from "../utils/createHash";
@@ -168,32 +168,36 @@ async function getData(result, error, props  ) {
 }
 
 
+async function addAllow(nullifier , commitment ) {
+  //  let nullifier = "0xff4d7f300812f82d8953fec346060c84232ee73ccdb7989b18bd0e6fc7ba98" ;
+  // let commitment = "0x0686d8b197dba5dffd9c24b27e19659e8748cd390f079395ddcc4be66e24a9c7" ; 
+  const data =new FormData() ; 
+  data.append("nullifier",nullifier) ; 
+  data.append("commitment",commitment) ;
+  // console.log(data.get("old_nullifier")) ; 
+  fetch(apiurl, {
+    method: "POST" ,
+    body: data ,
+    }).then (res=>res.json())
+    .then((result)=>{ alert (result);
+    }) ; 
+}
+
 async function allowResale(nullifierhash, commitmentHash) {
   try {
-
-
-
     console.log(account) ;
    let  contract = getL2contract(account);
     let txn = await contract.approveToTicketResale(
       commitmentHash,
       nullifierhash
     );
-    console.log(nullifierhash) ;
-    console.log(txn);
 
-    try {
-      // const collection = await connectmongoDB();
-      const allowTicket = 
-      {
-      "old_nullifier" : `${nullifierhash}`, 
-      "old_commitment": `${commitmentHash}`
-      } 
-    console.log(allowTicket)
-    }catch (error) {
-      // error in the database ; 
-      alert(error);
-    }
+try {
+  addAllow(nullifierhash , commitmentHash )
+}catch(err) {
+console.log(err) ;  
+}
+    
     // store this ticket in the datababase
   } catch (error) {
     alert(`error in deployment ${error} `);

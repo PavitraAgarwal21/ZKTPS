@@ -6,7 +6,9 @@ import Router from "./routes/Router";
 import Header from "./components/Header";
 import { storeContext } from "./useContext/storeContext";
 import "react-toastify/dist/ReactToastify.css";
-
+import BuyResaleTicket from "./components/buyResaleTicket";
+// import { ScanNoteButton3 } from "./components/allowResale";
+import AllowResale  from "./components/allowResale";
 function App() {
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,11 @@ function App() {
         <Header />
         <Router />
       </div>
+     
+      <BuyResaleTicket account={account}/>
+      <AllowResale account={account}/>
     </storeContext.Provider>
+
   );
 }
 

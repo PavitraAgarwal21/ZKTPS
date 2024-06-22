@@ -344,11 +344,6 @@
           "kind": "data",
           "name": "commitment",
           "type": "core::integer::u256"
-        },
-        {
-          "kind": "data",
-          "name": "nullifierhash",
-          "type": "core::integer::u256"
         }
       ]
     },
