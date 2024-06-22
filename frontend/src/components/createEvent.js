@@ -80,14 +80,9 @@ export default function CreateEvent() {
         felt_event_name,
         no_of_tickets,
         token_address
-      );
-console.log(tx);
-      // await new Promise((resolve) => setTimeout(resolve, 3000));
+      );      
       
-      
-    
 const transactionHash = tx.transaction_hash;
-
 console.log(`transaction hash - ${transactionHash}`);
 
 let data = await fetchData(transactionHash , 2 );

@@ -79,7 +79,6 @@ function BuyTicket() {
       );
 
       const transactionHash = tx2.transaction_hash;
-      console.log(`transaction hash - ${transactionHash}`); 
       
       let data = await fetchData(transactionHash , 3 );
       let buyer = data[0].value ; 
