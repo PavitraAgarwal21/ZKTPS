@@ -17,34 +17,18 @@ import { toast } from "react-toastify";
 import { storeContext } from "../useContext/storeContext";
 import { Button, Card, Clipboard } from "flowbite-react";
 import BeatLoader from "react-spinners/BeatLoader";
-function BuyTicket() {
+function BuyTicket(props) {
   const { account } = useContext(storeContext);
   const { event_index } = useParams();
   const eventUrl = `${window.location.origin}/home/${event_index}`;
-  const [price, setPrice] = useState(null);
-  const [name, setName] = useState(null);
-  const [address, setAddress] = useState(null);
-  const [tName, setTName] = useState(null);
+  const tName = props.tName;
+  const name = props.name;
+  const price = props.price;
   const [loading, setLoading] = useState(false);
   const override = {
     display: "block",
     marginTop: "250px",
   };
-  useEffect(() => {
-    async function fetchDetails() {
-      setLoading(true);
-      const { event_price, event_name, token_address } = await getDetails(
-        event_index
-      );
-      setPrice(parseInt(event_price));
-      setName(event_name);
-      const t_name = get_token_name(token_address);
-      setTName(t_name);
-      setAddress(token_address);
-      setLoading(false);
-    }
-    fetchDetails();
-  }, []);
   async function buy_ticket() {
     if (account == null) {
       toast.error("Connect Wallet first");
@@ -79,24 +63,18 @@ function BuyTicket() {
       );
 
       const transactionHash = tx2.transaction_hash;
-      
-      let data = await fetchData(transactionHash , 3 );
-      let buyer = data[0].value ; 
-      let ticketEventIndex = data[1].value ; 
-      let creatorOfTicket = data[2].value ; 
-      let commitment = data[3].value ; 
-      let nullifier = data[4].value ; 
-      
 
+      let data = await fetchData(transactionHash, 3);
+      let buyer = data[0].value;
+      let ticketEventIndex = data[1].value;
+      let creatorOfTicket = data[2].value;
+      let commitment = data[3].value;
+      let nullifier = data[4].value;
 
-      console.log(`buyer - ${buyer} ticketEventIndex - ${ticketEventIndex} creatorOfTicket - ${creatorOfTicket} commitment - ${commitment} nullifier - ${nullifier}`);
-      // event emit values creator of the  event and their event inde 
-
-      
-      
-      
-      
-
+      console.log(
+        `buyer - ${buyer} ticketEventIndex - ${ticketEventIndex} creatorOfTicket - ${creatorOfTicket} commitment - ${commitment} nullifier - ${nullifier}`
+      );
+      // event emit values creator of the  event and their event inde
 
       const noteString = `${nullifier},${secret},${nullifier_hash},${commitment_hash},${event_index},${amount},${token_address}`;
       const qrDataURL = await CreateTicketQR(noteString);

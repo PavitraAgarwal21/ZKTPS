@@ -16,7 +16,11 @@ const Header = () => {
     setDisplay(`${start}...${end}`);
   };
   function connectWalletL2() {
-    setShowAuthFlow(true);
+    if (!primaryWallet) {
+      setShowAuthFlow(true);
+    } else {
+      toast.success("connected");
+    }
   }
 
   useEffect(() => {
@@ -24,7 +28,6 @@ const Header = () => {
       if (primaryWallet) {
         setAccount(true);
         truncateWalletAddress(primaryWallet.address);
-        toast.success("connected");
       }
     };
     connect();
@@ -52,13 +55,9 @@ const Header = () => {
       </div>
       <Navbar.Collapse>
         {status ? (
-          <Link to={`/home/${index}`} active>
-            Home
-          </Link>
+          <Link to={`/home/${index}`}>Home</Link>
         ) : (
-          <Link to="/" active>
-            Home
-          </Link>
+          <Link to="/">Home</Link>
         )}
         {status && (
           <>

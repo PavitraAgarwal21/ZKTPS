@@ -1,57 +1,52 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import BuyTicket from "../components/buyTicket";
-import { getDetails } from "../web3/web3";
+import { getDetails, get_token_name } from "../web3/web3";
 import { storeContext } from "../useContext/storeContext";
 import BeatLoader from "react-spinners/BeatLoader";
 const EventRoute = () => {
   const { event_index } = useParams();
   const [isValid, setIsValid] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [price, setPrice] = useState(null);
+  const [name, setName] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [tName, setTName] = useState(null);
   const override = {
     display: "block",
     marginTop: "250px",
   };
-  const { event_creation, setStatus, setIndex } = useContext(storeContext);
+  const { setStatus, setIndex } = useContext(storeContext);
   setIndex(event_index);
   useEffect(() => {
     const checkEventIndex = async () => {
-      if (!event_creation) {
-        try {
-          setLoading(true);
-          const { event_price, event_name, token_address } = await getDetails(
-            event_index
-          );
-          if (event_price == 0) {
-            setLoading(false);
-            setIsValid(false);
-          } else {
-            setLoading(false);
-            setIsValid(true);
-            setStatus(true);
-          }
-        } catch (error) {
+      try {
+        setLoading(true);
+        const { event_price, event_name, token_address } = await getDetails(
+          event_index
+        );
+        console.log(event_price);
+        if (event_price == 0) {
           setLoading(false);
           setIsValid(false);
+        } else {
+          setPrice(parseInt(event_price));
+          setName(event_name);
+          const t_name = get_token_name(token_address);
+          setTName(t_name);
+          setAddress(token_address);
+          setLoading(false);
+          setIsValid(true);
+          setStatus(true);
         }
-      } else {
-        setStatus(true);
-        setIsValid(true);
+      } catch (error) {
+        setLoading(false);
+        setIsValid(false);
       }
     };
 
     checkEventIndex();
-  }, [event_index]);
-
-  if (isValid === null) {
-    // Optionally, you can show a loading indicator while checking the event index
-    return <div>Loading...</div>;
-  }
-
-  if (!isValid) {
-    // Redirect or show an error message if the event index is not valid
-    return <Navigate to="/error" />; // Adjust the path as necessary
-  }
+  }, []);
 
   return (
     <div>
@@ -62,7 +57,7 @@ const EventRoute = () => {
         </>
       ) : (
         <div style={{ marginTop: "250px" }}>
-          <BuyTicket />
+          <BuyTicket tName={tName} price={price} name={name} />
         </div>
       )}
     </div>

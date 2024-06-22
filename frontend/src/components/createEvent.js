@@ -54,7 +54,7 @@ export default function CreateEvent() {
     await create_event();
     closeModal();
   };
-  const { account, setEvent_creation } = useContext(storeContext);
+  const { account } = useContext(storeContext);
 
   async function create_event() {
     setLoading(true);
@@ -73,32 +73,23 @@ export default function CreateEvent() {
     const contract = getL2contract(account);
     console.log(contract);
     try {
-      setEvent_creation(true);
       const tx = await contract.createTicketEvent(
         event_index,
         price,
         felt_event_name,
         no_of_tickets,
         token_address
-      );      
-      
-const transactionHash = tx.transaction_hash;
-console.log(`transaction hash - ${transactionHash}`);
+      );
+      const transactionHash = tx.transaction_hash;
+      console.log(`transaction hash - ${transactionHash}`);
 
-let data = await fetchData(transactionHash , 2 );
-let creator = data[0].value ; 
-let eventIndex = data[1].value ; // in the hex value 
-// event emit values creator of the  event and their event inde 
-console.log(`creator - ${creator} eventIndex - ${eventIndex}`); 
-
-
-
-
-
-
+      let data = await fetchData(transactionHash, 2);
+      let creator = data[0].value;
+      let eventIndex = data[1].value; // in the hex value
+      // event emit values creator of the  event and their event inde
+      console.log(`creator - ${creator} eventIndex - ${eventIndex}`);
       // Example usage with user input (you can replace this with your actual input handling logic)
     } catch (error) {
-      setEvent_creation(false);
       setLoading(false);
       toast.error("error in creating event");
       return;
