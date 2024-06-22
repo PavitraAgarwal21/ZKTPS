@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { RpcProvider } from "starknet";
-import { connect } from "starknetkit";
 import logo from "../Img/logo1.png";
 import { toast } from "react-toastify";
 import { storeContext } from "../useContext/storeContext";
 import { Button, Navbar } from "flowbite-react";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 const Header = () => {
   const [display, setDisplay] = useState(null);
-  //   const [account, setAccount] = useState(null);
+  const { setShowAuthFlow, primaryWallet } = useDynamicContext();
   const { account, setAccount, status, index } = useContext(storeContext);
   const truncateWalletAddress = async (address, length = 4) => {
     if (!address) return "";
@@ -16,30 +15,20 @@ const Header = () => {
     const end = address.substring(address.length - length);
     setDisplay(`${start}...${end}`);
   };
-  async function connectWalletL2() {
-    const { wallet } = await connect({
-      provider: new RpcProvider({
-        nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
-      }),
-      dappName: "ZKTPS",
-    });
-    if (wallet && wallet.isConnected) {
-      toast.success("connected");
-      setAccount(wallet.account);
-    }
+  function connectWalletL2() {
+    setShowAuthFlow(true);
   }
 
   useEffect(() => {
     const connect = async () => {
-      try {
-        const address = account.address;
-        truncateWalletAddress(address);
-      } catch (error) {
-        console.log(error);
+      if (primaryWallet) {
+        setAccount(true);
+        truncateWalletAddress(primaryWallet.address);
+        toast.success("connected");
       }
     };
     connect();
-  }, [account]);
+  }, [primaryWallet]);
 
   return (
     <Navbar fluid rounded className="shadow-md">
