@@ -5,6 +5,8 @@ import Dialog from "@mui/material/Dialog";
 import { isMobile } from "react-device-detect";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
+import { toast } from "react-toastify";
+
 import {
   Invalidate,
   getL2contract,
@@ -193,13 +195,17 @@ export default function AllowResale(props) {
         nullifierHash
       );
 
+
       try {
         addAllow(nullifierHash, commitmentHash);
       } catch (err) {
         console.log(err);
       }
+      toast.success("Ticket is allow to Resale");
+
     } catch (error) {
       alert(`error in deployment ${error} `);
+      toast.error("error in allow ticket ");
     }
   }
 
