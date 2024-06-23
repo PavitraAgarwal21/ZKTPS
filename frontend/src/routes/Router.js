@@ -4,6 +4,7 @@ import Initial from "../components/Initial";
 import InvalidateTicket from "../components/invalidateTicket";
 import VerifyTicket from "../components/verifyTicket";
 import AllowResale from "../components/allowResale";
+import BuyResaleTicket from "../components/buyResaleTicket";
 const Router = () => {
   return (
     <Routes>
@@ -12,6 +13,7 @@ const Router = () => {
       <Route path="/verify" element={<VerifyTicket />} />
       <Route path="/invalidate" element={<InvalidateTicket />} />
       <Route path="/resale" element={<AllowResale />} />
+      <Route path="/buyResale" element={<BuyResaleTicket />} />
     </Routes>
   );
 };

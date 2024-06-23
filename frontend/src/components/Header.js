@@ -35,14 +35,18 @@ const Header = () => {
   }, [primaryWallet]);
 
   return (
-    <Navbar fluid rounded className="shadow-md">
+    <Navbar fluid rounded className="bg-transparent shadow-lg text-white">
       <Navbar.Brand href="/">
-        <img src={logo} className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+        <img
+          src={logo}
+          className="ml-20 h-6 sm:h-9"
+          alt="Flowbite React Logo"
+        />
+        <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
           ZKTPS
         </span>
       </Navbar.Brand>
-      <div className="flex md:order-2">
+      <div className="flex md:order-2 mr-20">
         {!account ? (
           <Button color="dark" onClick={connectWalletL2}>
             Connect Wallet
@@ -65,9 +69,10 @@ const Header = () => {
             <Link to="/verify">Verify Ticket</Link>
             <Link to="/invalidate">Invalidate Ticket</Link>
             <Link to="/resale">Resale Tickets</Link>
+            <Link to="/buyResale">Buy Resale Tickets</Link>
           </>
         )}
-        <Link href="#">Info</Link>
+        <Link to="/info">Info</Link>
       </Navbar.Collapse>
     </Navbar>
   );
