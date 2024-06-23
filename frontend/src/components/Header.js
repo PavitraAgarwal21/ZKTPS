@@ -69,9 +69,9 @@ const Header = () => {
             <Link to="/verify">Verify Ticket</Link>
             <Link to="/invalidate">Invalidate Ticket</Link>
             <Link to="/resale">Resale Tickets</Link>
-            <Link to="/buyResale">Buy Resale Tickets</Link>
           </>
         )}
+        <Link to="/buyResale">Buy Resale Tickets</Link>
         <Link to="/info">Info</Link>
       </Navbar.Collapse>
     </Navbar>
