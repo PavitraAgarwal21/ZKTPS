@@ -20,7 +20,7 @@ export const getL2contract = (account) => {
   let contract = new Contract(abi3, Contract_Address, account);
   return contract;
 };
-export const apiurl = "http://localhost:5038/";
+export const apiurl = "https://server-peo7.onrender.com/";
 
 export const getL2contractRead = () => {
   const provider = getL2provider();
