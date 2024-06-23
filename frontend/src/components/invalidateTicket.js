@@ -6,7 +6,6 @@ import { isMobile } from "react-device-detect";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import {
-
   Invalidate,
   connectWalletL1,
   getL1Contract,
@@ -184,8 +183,9 @@ async function getData(result, error, props) {
 }
 
 const fetchDataContract = async (commitment) => {
-  const url = "https://sepolia-api.voyager.online/beta/events?ps=10&p=1&contract=0x06f52ba412b2b8fd27bd552f734265bf0071808587aca3552bd80bb58e17741a";
-  
+  const url =
+    "https://sepolia-api.voyager.online/beta/events?ps=10&p=1&contract=0x06f52ba412b2b8fd27bd552f734265bf0071808587aca3552bd80bb58e17741a";
+
   const apiKey = "qN25adhQX38RewEouZjWa6Bd1dj7AFuKUrxVBnX2";
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -200,17 +200,19 @@ const fetchDataContract = async (commitment) => {
       });
 
       const data = await response.json();
-      const firstEvent = data.items[0]; 
-      console.log(firstEvent) ; 
-      const firstEventName = firstEvent.name ; 
-      const firstEventData = firstEvent.dataDecoded ;
+      const firstEvent = data.items[0];
+      console.log(firstEvent);
+      const firstEventName = firstEvent.name;
+      const firstEventData = firstEvent.dataDecoded;
       if (firstEventName === "inValidatedTicket") {
-        if (firstEventData[3].value == commitment ) {
-          console.log("The event is found") ; 
-          handleInvalidatedTicketEvent(firstEventData, firstEventData[0].value ) ;
-          break ; 
+        if (firstEventData[3].value == commitment) {
+          console.log("The event is found");
+          handleInvalidatedTicketEvent(firstEventData, firstEventData[0].value);
+          break;
         } else {
-          console.log("please wait .. The event with particular commitment is not found " ) ;  
+          console.log(
+            "please wait .. The event with particular commitment is not found "
+          );
         }
       } else {
         console.log("Please wait... as event with invalidate is not found ");
@@ -263,23 +265,28 @@ async function invalidateTicket(
       await transaction.wait();
       toast.success("invalidate Successful from l1");
       try {
-        fetchDataContract(toHex(commitmentHash)) ;
-      }catch (error  ) {
-        console.log(`error in the fectching api ${error}`) ;
+        fetchDataContract(toHex(commitmentHash));
+      } catch (error) {
+        console.log(`error in the fectching api ${error}`);
       }
     } catch (error) {
       alert(error);
     }
   } catch (error) {
     console.log(error);
-  }  
+  }
 }
 
 export default function InvalidateTicket() {
   return (
-    <div className="container mx-auto mt-64 flex flex-col items-center justify-center">
-      <h2 className="font-bold text-white">Scan Here</h2>
-      <p className="text-white">
+    <div
+      className="container mx-auto mt-64 flex flex-col items-center justify-center"
+      style={{ marginTop: "90px" }}
+    >
+      <h2 className="font-bold text-white" style={{ fontSize: "55px" }}>
+        Scan Here
+      </h2>
+      <p className="text-white" style={{ fontSize: "40px" }}>
         <span className="font-bold">Disclaimer! </span>
         Here you can invalidate the ticket for prevention of further use case or
         black marketing of these tickets.

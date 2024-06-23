@@ -159,7 +159,9 @@ export default function CreateEvent() {
                 </div>
               )}
               <div className="w-full">
-                <Button onClick={create_event}>Create</Button>
+                <Button onClick={create_event} color="purple">
+                  Create
+                </Button>
               </div>
             </div>
           </Modal.Body>

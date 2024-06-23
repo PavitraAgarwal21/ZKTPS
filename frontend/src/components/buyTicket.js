@@ -45,7 +45,7 @@ function BuyTicket(props) {
       setLoading(false);
       return;
     }
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     const secret = random();
     const nullifier = random();
     const commitment_hash = commitmentHash(
@@ -132,7 +132,9 @@ function BuyTicket(props) {
             <p className="font-normal text-gray-700 dark:text-gray-400">
               Price: {price} {tName}
             </p>
-            <Button onClick={buy_ticket}>Buy Ticket</Button>
+            <Button onClick={buy_ticket} color="yellow">
+              Buy Ticket
+            </Button>
           </Card>
         </div>
       )}

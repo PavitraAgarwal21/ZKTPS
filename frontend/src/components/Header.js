@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../Img/logo1.png";
+import logo from "../Img/ZKTPS2.png";
 import { toast } from "react-toastify";
 import { storeContext } from "../useContext/storeContext";
 import { Button, Navbar } from "flowbite-react";
@@ -39,12 +39,18 @@ const Header = () => {
       <Navbar.Brand href="/">
         <img
           src={logo}
-          className="ml-20 h-6 sm:h-9"
+          className="ml-20"
           alt="Flowbite React Logo"
+          style={{
+            height: "157px",
+            marginTop: "-50px",
+            marginBottom: "-55px",
+            marginLeft: "100px",
+          }}
         />
-        <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
+        {/* <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
           ZKTPS
-        </span>
+        </span> */}
       </Navbar.Brand>
       <div className="flex md:order-2 mr-20">
         {!account ? (

@@ -2,7 +2,7 @@ import jsPDF from "jspdf";
 
 // Example background image URL (replace with your image URL)
 // const backgroundImageURL = "https://images.icc-cricket.com/image/upload/t_ratio21_9-size60/prd/uh7op6arhhnprscg18mv";
-import backgroundImageURL from "../Img/ticket.jpg";
+import backgroundImageURL from "../Img/96.jpg";
 // Local background image URL
 // const backgroundImageURL = "./Img/ticket2.jpeg";
 export function downloadTicket(
@@ -16,7 +16,7 @@ export function downloadTicket(
   const pdf = new jsPDF({
     orientation: "landscape", // Landscape orientation for ticket format
     unit: "mm", // Use millimeters for measurements
-    format: [120, 50] // Standard credit card size: 85.6 mm x 54 mm
+    format: [120, 50], // Standard credit card size: 85.6 mm x 54 mm
   });
 
   // Add background image
@@ -24,7 +24,7 @@ export function downloadTicket(
 
   // Set the event name as the heading in the middle
   pdf.setFontSize(14);
-  pdf.setTextColor("#00000");
+  pdf.setTextColor("#ffffff");
   pdf.text(event_name, pdf.internal.pageSize.getWidth() / 2, 10, {
     align: "center",
   });
@@ -37,17 +37,17 @@ export function downloadTicket(
 
   // Left side: Price
   pdf.setFontSize(7);
-  pdf.setTextColor("#000000");
+  pdf.setTextColor("#ffffff");
   pdf.text(`Price: ${denomination} ${token_name}`, 10, 30);
 
   // Below Price: Event Index
   pdf.setFontSize(7);
-  pdf.setTextColor("#000000");
+  pdf.setTextColor("#ffffff");
   pdf.text(`Event ID: ${event_index}`, 10, 36);
 
   // Owner (moved below QR code to avoid overlap)
   pdf.setFontSize(6);
-  pdf.setTextColor("#000000");
+  pdf.setTextColor("#ffffff");
   pdf.text(`Owner: ${owner}`, 10, 42);
 
   // Right side: QR Code
@@ -55,7 +55,7 @@ export function downloadTicket(
   pdf.addImage(qrDataURL, "JPEG", qrX, 20, 25, 25);
 
   // Event Link (moved below QR code)
-  pdf.setTextColor("#000000"); // Blue color for the link
+  pdf.setTextColor("#ffffff"); // Blue color for the link
   pdf.setFontSize(7);
   pdf.textWithLink("Event Link", 10, 48, {
     url: `http://localhost:3000/home/${event_index}`,
@@ -63,8 +63,8 @@ export function downloadTicket(
 
   // Bottom row: Powered by ZKTPS
   pdf.setFontSize(7);
-  pdf.setTextColor("#808080");
-  pdf.text("Powered by ZKTPS", pdf.internal.pageSize.getWidth() / 2, 52, {
+  pdf.setTextColor("#ffffff");
+  pdf.text("Powered by ZKTPS", pdf.internal.pageSize.getWidth() / 2, 48, {
     align: "center",
   });
 

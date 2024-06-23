@@ -195,14 +195,12 @@ export default function AllowResale(props) {
         nullifierHash
       );
 
-
       try {
         addAllow(nullifierHash, commitmentHash);
       } catch (err) {
         console.log(err);
       }
       toast.success("Ticket is allow to Resale");
-
     } catch (error) {
       alert(`error in deployment ${error} `);
       toast.error("error in allow ticket ");
@@ -210,9 +208,14 @@ export default function AllowResale(props) {
   }
 
   return (
-    <div className="container mx-auto mt-64 flex flex-col items-center justify-center">
-      <h2 className="font-bold text-white">Scan Here</h2>
-      <p className="text-white">
+    <div
+      className="container mx-auto mt-64 flex flex-col items-center justify-center"
+      style={{ marginTop: "90px" }}
+    >
+      <h2 className="font-bold text-white" style={{ fontSize: "55px" }}>
+        Scan Here
+      </h2>
+      <p className="text-white" style={{ fontSize: "40px" }}>
         <span className="font-bold">Disclaimer! </span>
         Here you can scan the original ticket and can opt for resale!! This
         ticket will be available for resale and anyone can buy it if interested

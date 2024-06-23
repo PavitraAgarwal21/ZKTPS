@@ -59,7 +59,9 @@ export default function JoinEvent() {
                 />
               </div>
               <div className="w-full">
-                <Button onClick={join_event}>Join</Button>
+                <Button onClick={join_event} color="purple">
+                  Join
+                </Button>
               </div>
             </div>
           </Modal.Body>

@@ -61,7 +61,7 @@ export default function BuyResaleTicket(props) {
       setLoading(false);
       return;
     }
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     let new_nullifier = random();
     let new_secret = random();
     const new_commitment_hash = commitmentHash(

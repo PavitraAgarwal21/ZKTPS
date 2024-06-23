@@ -227,9 +227,14 @@ async function verifyTicket(nullifierHash, commitmentHash) {
 
 export default function VerifyTicket() {
   return (
-    <div className="container mx-auto mt-64 flex flex-col items-center justify-center">
-      <h2 className="font-bold text-white">Scan Here</h2>
-      <p className="text-white">
+    <div
+      className="container mx-auto mt-64 flex flex-col items-center justify-center"
+      style={{ marginTop: "90px" }}
+    >
+      <h2 className="font-bold text-white" style={{ fontSize: "55px" }}>
+        Scan Here
+      </h2>
+      <p className="text-white" style={{ fontSize: "40px" }}>
         <span className="font-bold">Disclaimer! </span>
         You can verify whether the ticket you've been given has already been
         invalidated. If it has, you can return it to the creator and request a
