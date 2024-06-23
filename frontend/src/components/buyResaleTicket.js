@@ -8,7 +8,6 @@ import {
   getL2contract,
   get_token_name,
   toHex,
-  calculatePurchaseFeeLocal,
   apiurl,
   getL2contractRead,
 } from "../web3/web3";
@@ -19,9 +18,9 @@ import { CreateTicketQR } from "../utils/createTicketQR";
 import { downloadTicket } from "../utils/downloadTicket";
 import { Button, Card } from "flowbite-react";
 import { storeContext } from "../useContext/storeContext";
+import { toast } from "react-toastify";
 
 export default function BuyResaleTicket(props) {
-  // this will give all the data in this of the condition
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const override = {
@@ -56,7 +55,12 @@ export default function BuyResaleTicket(props) {
     let price = Number(event_price);
     let fees = price * 0.01;
     let total = price + fees;
-    await approve(account, total, toHex(token_address));
+    let status = await approve(account, total, toHex(token_address));
+    if (status != true) {
+      toast.error("failed to approve");
+      setLoading(false);
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 5000));
     let new_nullifier = random();
     let new_secret = random();
@@ -84,6 +88,7 @@ export default function BuyResaleTicket(props) {
         event_name,
         account.address
       );
+      toast.success(`Ticket event Index:${event_index}`);
       await deleteOldTicket(old_nullifier_hash, old_commitment_hash);
     } catch (error) {
       alert(error);
@@ -93,7 +98,6 @@ export default function BuyResaleTicket(props) {
     const data = new FormData();
     data.append("nullifier", nullifier);
     data.append("commitment", commitment);
-    // console.log(data.get("old_nullifier")) ;
     fetch(apiurl, {
       method: "DELETE",
       body: data,
@@ -112,7 +116,7 @@ export default function BuyResaleTicket(props) {
           <p className="text-light">Fetching Transactions...</p>
         </>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full overflow-hidden">
           {data.map((data, index) => (
             <Card
               key={index}

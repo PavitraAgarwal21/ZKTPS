@@ -85,10 +85,8 @@ export default function CreateEvent() {
 
       let data = await fetchData(transactionHash, 2);
       let creator = data[0].value;
-      let eventIndex = data[1].value; // in the hex value
-      // event emit values creator of the  event and their event inde
+      let eventIndex = data[1].value;
       console.log(`creator - ${creator} eventIndex - ${eventIndex}`);
-      // Example usage with user input (you can replace this with your actual input handling logic)
     } catch (error) {
       setLoading(false);
       toast.error("error in creating event");
@@ -96,6 +94,7 @@ export default function CreateEvent() {
     }
     setLoading(false);
     toast.success("Event created successfully");
+    toast.success(`Your Event Index:${event_index}`);
     history(`home/${event_index}`);
   }
   return (
