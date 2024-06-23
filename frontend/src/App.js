@@ -42,6 +42,7 @@ function App() {
       <div className="App">
         <Header />
         <Router />
+        <BuyResaleTicket account={account}/>
       </div>
     </storeContext.Provider>
 
