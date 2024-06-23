@@ -24,6 +24,8 @@
 
 # Workflow
 
+![Workflow](./ZKTPSWORKFLOW.png)
+
 # Features
 
 - **Event Creation:** Easily create and manage events with minimal transaction fees, empowering organizers to host events efficiently.
@@ -107,6 +109,12 @@ try {
     } catch (error) {
       alert(error);
     }
+```
+
+- **Reference of usage:**
+
+```
+https://github.com/PavitraAgarwal21/ZKTPS/blob/7a69a4af580ad0d290fc5808c8e37c691d58aa39/frontend/src/components/invalidateTicket.js#L185
 ```
 
 - **Dynamic API Efficiency:** Enhances wallet connections by offering seamless and efficient methods for interacting with StarkNet.

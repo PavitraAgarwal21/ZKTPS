@@ -6,6 +6,7 @@ import VerifyTicket from "../components/verifyTicket";
 import AllowResale from "../components/allowResale";
 import BuyResaleTicket from "../components/buyResaleTicket";
 import PrivateRoute from "./PrivateRoute";
+import Info from "../components/Info";
 const Router = () => {
   return (
     <Routes>
@@ -24,6 +25,7 @@ const Router = () => {
         element={<PrivateRoute Component={AllowResale} />}
       />
       <Route path="/buyResale" element={<BuyResaleTicket />} />
+      <Route path="info" element={<Info />} />
     </Routes>
   );
 };

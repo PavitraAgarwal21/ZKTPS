@@ -58,7 +58,7 @@ export function downloadTicket(
   pdf.setTextColor("#ffffff"); // Blue color for the link
   pdf.setFontSize(7);
   pdf.textWithLink("Event Link", 10, 48, {
-    url: `http://localhost:3000/home/${event_index}`,
+    url: `https://zktps.netlify.app/home/${event_index}`,
   });
 
   // Bottom row: Powered by ZKTPS

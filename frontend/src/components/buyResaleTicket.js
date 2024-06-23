@@ -29,9 +29,11 @@ export default function BuyResaleTicket(props) {
   };
   useEffect(() => {
     async function getarr() {
+      setLoading(true);
       fetch(apiurl + "get")
         .then((response) => response.json())
         .then((data) => setData(data));
+      setLoading(false);
     }
     getarr();
   }, []);
@@ -40,6 +42,7 @@ export default function BuyResaleTicket(props) {
   let contract = getL2contract(account);
 
   async function getvalue(old_nullifier_hash, old_commitment_hash) {
+    setLoading(true);
     console.log(old_commitment_hash);
 
     let contractRead = getL2contractRead();
@@ -92,6 +95,7 @@ export default function BuyResaleTicket(props) {
       await deleteOldTicket(old_nullifier_hash, old_commitment_hash);
     } catch (error) {
       alert(error);
+      setLoading(false);
     }
   }
   async function deleteOldTicket(nullifier, commitment) {
@@ -106,6 +110,7 @@ export default function BuyResaleTicket(props) {
       .then((result) => {
         alert(result);
       });
+    setLoading(false);
   }
 
   return (
@@ -113,7 +118,7 @@ export default function BuyResaleTicket(props) {
       {loading ? (
         <>
           <BeatLoader color="#ffffff" cssOverride={override} />
-          <p className="text-light">Fetching Transactions...</p>
+          <p className="text-light">Loading...</p>
         </>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full overflow-hidden">
