@@ -5,7 +5,8 @@ import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
 import abi3 from "../abis/newTicket.json";
 import TicketVerifierABI from "../abis/TicketVerifierABI.json";
-export const Contract_Address ="0x06f52ba412b2b8fd27bd552f734265bf0071808587aca3552bd80bb58e17741a";
+export const Contract_Address =
+  "0x06f52ba412b2b8fd27bd552f734265bf0071808587aca3552bd80bb58e17741a";
 // "0x013c921a7e308e85a08c1c7d1f1648767de8c251dd6870d19086a92aebf3808c";
 // "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
 export const L1_Contract_Address = "0xC59A87F9a1498998ecbfd83CBDC3b85B6eC3Eb89";
@@ -19,7 +20,7 @@ export const getL2contract = (account) => {
   let contract = new Contract(abi3, Contract_Address, account);
   return contract;
 };
-export const apiurl = "http://localhost:5038/" ; 
+export const apiurl = "http://localhost:5038/";
 
 export const getL2contractRead = () => {
   const provider = getL2provider();
@@ -149,7 +150,7 @@ export const fetchData = async (txnHash, index) => {
   const url = `https://sepolia-api.voyager.online/beta/events?p=1&txnHash=${encodeURIComponent(
     txnHash
   )}`;
-  const apiKey = "qN25adhQX38RewEouZjWa6Bd1dj7AFuKUrxVBnX2";
+  const apiKey = process.env.apiKey;
 
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
