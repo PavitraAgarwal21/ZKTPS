@@ -12,9 +12,10 @@ import {
   toHex,
   apiurl,
 } from "../web3/web3";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { on } from "process";
 import { nullifierHash } from "../utils/createHash";
+import { storeContext } from "../useContext/storeContext";
 // const { MongoClient } = require("mongodb");
 
 // async function connectmongoDB() {
@@ -29,7 +30,7 @@ import { nullifierHash } from "../utils/createHash";
 // }
 
 export default function AllowResale(props) {
-  const account = props.account;
+  const { account } = useContext(storeContext);
 
   const QRReader = (props) => {
     console.log(props);
@@ -40,7 +41,7 @@ export default function AllowResale(props) {
           ViewFinder={ViewFinder}
           constraints={{ facingMode }}
           onResult={async (result, error) => {
-            await getData(result, error, props, props.account);
+            await getData(result, error, props);
           }}
         />
       </div>

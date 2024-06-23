@@ -52,10 +52,11 @@ export default function BuyResaleTicket(props) {
     const { event_price, event_name, token_address } = await getDetails(
       event_index
     );
+    console.log(token_address);
     let price = Number(event_price);
     let fees = price * 0.01;
     let total = price + fees;
-    await approve(account, total);
+    await approve(account, total, toHex(token_address));
     await new Promise((resolve) => setTimeout(resolve, 5000));
     let new_nullifier = random();
     let new_secret = random();
@@ -75,7 +76,15 @@ export default function BuyResaleTicket(props) {
       const qrDataURL = await CreateTicketQR(noteString);
       const token_name = get_token_name(token_address);
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      downloadTicket(qrDataURL, price, token_name, event_name);
+      downloadTicket(
+        qrDataURL,
+        total,
+        token_name,
+        event_index,
+        event_name,
+        account.address
+      );
+      await deleteOldTicket(old_nullifier_hash, old_commitment_hash);
     } catch (error) {
       alert(error);
     }
