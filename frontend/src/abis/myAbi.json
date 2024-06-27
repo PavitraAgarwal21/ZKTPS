@@ -86,28 +86,6 @@
     "items": [
       {
         "type": "function",
-        "name": "getContractOwner",
-        "inputs": [],
-        "outputs": [
-          {
-            "type": "core::starknet::contract_address::ContractAddress"
-          }
-        ],
-        "state_mutability": "view"
-      },
-      {
-        "type": "function",
-        "name": "getVerifier",
-        "inputs": [],
-        "outputs": [
-          {
-            "type": "core::felt252"
-          }
-        ],
-        "state_mutability": "view"
-      },
-      {
-        "type": "function",
         "name": "getEventdetails",
         "inputs": [
           {
@@ -126,10 +104,6 @@
         "type": "function",
         "name": "createTicketEvent",
         "inputs": [
-          {
-            "name": "event_id",
-            "type": "core::integer::u256"
-          },
           {
             "name": "_price",
             "type": "core::integer::u256"
@@ -306,7 +280,7 @@
       {
         "name": "creator",
         "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "kind": "data"
       },
       {
         "name": "ticketEventIndex",
@@ -323,7 +297,7 @@
       {
         "name": "buyer",
         "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "kind": "data"
       },
       {
         "name": "ticketEventIndex",
@@ -343,6 +317,11 @@
       {
         "name": "nullifierhash",
         "type": "core::integer::u256",
+        "kind": "data"
+      },
+      {
+        "name": "fromAddress",
+        "type": "core::felt252",
         "kind": "data"
       }
     ]
@@ -355,7 +334,7 @@
       {
         "name": "buyer",
         "type": "core::starknet::contract_address::ContractAddress",
-        "kind": "key"
+        "kind": "data"
       },
       {
         "name": "ticketEventIndex",
@@ -369,11 +348,6 @@
       },
       {
         "name": "commitment",
-        "type": "core::integer::u256",
-        "kind": "data"
-      },
-      {
-        "name": "nullifierhash",
         "type": "core::integer::u256",
         "kind": "data"
       }

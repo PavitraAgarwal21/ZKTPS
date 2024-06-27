@@ -4,8 +4,8 @@ import {
   getL2provider,
   get_token_address,
   fetchData,
+  toDecimal,
 } from "../web3/web3";
-import random from "../utils/random";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import "../styles/eventModal.css";
@@ -63,7 +63,6 @@ export default function CreateEvent() {
       token_address = document.querySelector("address").value;
     }
     const provider = getL2provider();
-    let event_index = random();
     console.log(account);
     let price = document.querySelector("#price").value;
     let no_of_tickets = document.querySelector("#tickets").value;
@@ -74,7 +73,6 @@ export default function CreateEvent() {
     console.log(contract);
     try {
       const tx = await contract.createTicketEvent(
-        event_index,
         price,
         felt_event_name,
         no_of_tickets,
@@ -85,17 +83,17 @@ export default function CreateEvent() {
 
       let data = await fetchData(transactionHash, 2);
       let creator = data[0].value;
-      let eventIndex = data[1].value;
+      let eventIndex = toDecimal(data[1].value);
       console.log(`creator - ${creator} eventIndex - ${eventIndex}`);
+      setLoading(false);
+      toast.success("Event created successfully");
+      toast.success(`Your Event Index:${eventIndex}`);
+      history(`home/${eventIndex}`);
     } catch (error) {
       setLoading(false);
       toast.error("error in creating event");
       return;
     }
-    setLoading(false);
-    toast.success("Event created successfully");
-    toast.success(`Your Event Index:${event_index}`);
-    history(`home/${event_index}`);
   }
   return (
     <div>
