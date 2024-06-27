@@ -24,6 +24,7 @@ function BuyTicket(props) {
   const tName = props.tName;
   const name = props.name;
   const price = props.price;
+  const tickets = parseInt(props.tickets);
   const [loading, setLoading] = useState(false);
   const override = {
     display: "block",
@@ -34,9 +35,8 @@ function BuyTicket(props) {
       toast.error("Connect Wallet first");
       return;
     }
-    const { event_price, event_name, token_address } = await getDetails(
-      event_index
-    );
+    const { event_price, event_name, token_address, no_of_tickets } =
+      await getDetails(event_index);
     const amount = event_price;
     setLoading(true);
     let status = await approve(account, amount, toHex(token_address));
@@ -131,6 +131,9 @@ function BuyTicket(props) {
             </p>
             <p className="font-normal text-gray-700 dark:text-gray-400">
               Price: {price} {tName}
+            </p>
+            <p className="font-normal text-gray-700 dark:text-gray-400">
+              Available tickets: {tickets}
             </p>
             <Button onClick={buy_ticket} color="yellow">
               Buy Ticket

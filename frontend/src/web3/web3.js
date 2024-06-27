@@ -6,7 +6,7 @@ import abi2 from "../abis/STRKAbi.json";
 import abi3 from "../abis/myAbi.json";
 import TicketVerifierABI from "../abis/TicketVerifierABI.json";
 export const Contract_Address =
-  "0x005e7903e1675efb5199567bbd624f6aa7842909e019368469989d3436e8b59d";
+  "0x0771a2d2e4db1eeb822604d54a642acc953cf80103c940fa7bf29104b0f88433";
 // "0x06f52ba412b2b8fd27bd552f734265bf0071808587aca3552bd80bb58e17741a";
 // "0x013c921a7e308e85a08c1c7d1f1648767de8c251dd6870d19086a92aebf3808c";
 // "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
@@ -116,7 +116,8 @@ export const getDetails = async (event_index) => {
     const event_name = shortString.decodeShortString(tx.eventName);
     const event_price = tx.price;
     const token_address = tx.customToken;
-    return { event_price, event_name, token_address };
+    const no_of_tickets = tx.noOfTicketAvl;
+    return { event_price, event_name, token_address, no_of_tickets };
   } catch (error) {
     alert(error);
   }

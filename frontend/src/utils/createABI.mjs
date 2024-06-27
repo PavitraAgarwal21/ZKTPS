@@ -4,7 +4,7 @@ const provider = new RpcProvider({
   nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
 });
 const addrContract =
-  "0x006b1c6cc4be4d1f0c3314806c7e83515653e8c41e0fbfde569af8150dd615d1";
+  "0x0771a2d2e4db1eeb822604d54a642acc953cf80103c940fa7bf29104b0f88433";
 const compressedContract = await provider.getClassAt(addrContract);
 writeFileSync(
   "./myAbi.json",

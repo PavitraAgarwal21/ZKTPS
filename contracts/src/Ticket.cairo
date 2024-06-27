@@ -161,6 +161,8 @@ mod Ticket {
             let contract_address = get_contract_address();
             let caller = get_caller_address();
             let price = self.ticketEvents.read(event_index).price;
+            let noOfTicket = self.ticketEvents.read(event_index).noOfTicketAvl;
+            assert(noOfTicket >= 1, 'No tickets left');
             assert(token.allowance(caller, contract_address) >= price, 'allow first');
             // tranfering the total token from the user to the this contract 
             let status = token.transfer_from(caller, contract_address, price);

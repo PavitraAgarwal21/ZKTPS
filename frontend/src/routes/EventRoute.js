@@ -12,6 +12,7 @@ const EventRoute = () => {
   const [name, setName] = useState(null);
   const [address, setAddress] = useState(null);
   const [tName, setTName] = useState(null);
+  const [tickets, setTickets] = useState(null);
   const override = {
     display: "block",
     marginTop: "250px",
@@ -22,9 +23,8 @@ const EventRoute = () => {
     const checkEventIndex = async () => {
       try {
         setLoading(true);
-        const { event_price, event_name, token_address } = await getDetails(
-          event_index
-        );
+        const { event_price, event_name, token_address, no_of_tickets } =
+          await getDetails(event_index);
         console.log(event_price);
         if (event_price == 0) {
           setLoading(false);
@@ -35,6 +35,7 @@ const EventRoute = () => {
           const t_name = get_token_name(token_address);
           setTName(t_name);
           setAddress(token_address);
+          setTickets(no_of_tickets);
           setLoading(false);
           setIsValid(true);
           setStatus(true);
@@ -57,7 +58,12 @@ const EventRoute = () => {
         </>
       ) : (
         <div style={{ marginTop: "250px" }}>
-          <BuyTicket tName={tName} price={price} name={name} />
+          <BuyTicket
+            tName={tName}
+            price={price}
+            name={name}
+            tickets={tickets}
+          />
         </div>
       )}
     </div>
