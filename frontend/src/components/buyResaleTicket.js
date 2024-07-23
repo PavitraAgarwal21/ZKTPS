@@ -30,10 +30,13 @@ export default function BuyResaleTicket(props) {
   useEffect(() => {
     async function getarr() {
       setLoading(true);
+      console.log("hi");
       fetch(apiurl + "get")
         .then((response) => response.json())
-        .then((data) => setData(data));
-      setLoading(false);
+        .then((data) => {
+          setData(data);
+          setLoading(false);
+        });
     }
     getarr();
   }, []);
@@ -118,7 +121,7 @@ export default function BuyResaleTicket(props) {
       {loading ? (
         <>
           <BeatLoader color="#ffffff" cssOverride={override} />
-          <p className="text-light">Loading...</p>
+          <p className="text-white">Loading...</p>
         </>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full overflow-hidden">
