@@ -5,6 +5,9 @@ import abi1 from "../abis/ETHAbi.json";
 import abi2 from "../abis/STRKAbi.json";
 import abi3 from "../abis/myAbi.json";
 import TicketVerifierABI from "../abis/TicketVerifierABI.json";
+import { invalidateTicket } from "../components/invalidateTicket";
+import { verifyTicket } from "../components/verifyTicket";
+import { allowResale } from "../components/allowResale";
 export const Contract_Address =
   "0x0771a2d2e4db1eeb822604d54a642acc953cf80103c940fa7bf29104b0f88433";
 // "0x06f52ba412b2b8fd27bd552f734265bf0071808587aca3552bd80bb58e17741a";
@@ -179,3 +182,30 @@ export const fetchData = async (txnHash, index) => {
     await delay(1000);
   }
 };
+export async function getData(result, error, props, account) {
+  if (!!result) {
+    alert("Qr Scanned Successful");
+    props.handleClose();
+    try {
+      const values = result?.text.split(",");
+      const nullifier = parseInt(values[0]);
+      const secret = parseInt(values[1]);
+      const nullifierHash = values[2];
+      const commitmentHash = values[3];
+      if (props.func === "invalidate") {
+        await invalidateTicket(
+          nullifier,
+          secret,
+          nullifierHash,
+          commitmentHash
+        );
+      } else if (props.func === "verify") {
+        await verifyTicket(nullifierHash, commitmentHash);
+      } else if (props.func === "resale") {
+        await allowResale(nullifierHash, commitmentHash, account);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
