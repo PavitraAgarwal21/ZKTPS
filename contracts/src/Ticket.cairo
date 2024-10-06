@@ -1,8 +1,7 @@
 use starknet::ContractAddress;
-// implementing the l1-l2 messaging system .
+
 #[starknet::interface]
 pub trait IGetTicket<TContractState> {
-    fn getEventdetails(self: @TContractState, _ticketEventIndex: u256) -> Ticket::TicketEvent;
     fn createTicketEvent(
         ref self: TContractState,
         _price: u256,
@@ -17,58 +16,51 @@ pub trait IGetTicket<TContractState> {
         token_address: ContractAddress
     );
     fn calculateFees(self: @TContractState, _ticketPrice: u256) -> (u256, u256);
-    fn getTicket(self: @TContractState, _commitment: u256) -> Ticket::TicketCommitment;
     fn verifyTicket(self: @TContractState, _commitment: u256, _nullifierhash: u256) -> bool;
     fn approveToTicketResale(ref self: TContractState, _commitment: u256, _nullifierhash: u256);
     fn buyResaleTicket(
         ref self: TContractState, newCommitment: u256, oldNullifier: u256, oldCommitment: u256
     );
+    fn getTicket(self: @TContractState, _commitment: u256) -> Ticket::TicketCommitment;
+    fn getEventdetails(self: @TContractState, _ticketEventIndex: u256) -> Ticket::TicketEvent;
 }
+
 #[starknet::interface]
 trait IERC20<TContractState> {
     fn name(self: @TContractState) -> felt252;
-
     fn symbol(self: @TContractState) -> felt252;
-
     fn decimals(self: @TContractState) -> u8;
-
     fn total_supply(self: @TContractState) -> u256;
-
     fn balance_of(self: @TContractState, account: ContractAddress) -> u256;
-
     fn allowance(self: @TContractState, owner: ContractAddress, spender: ContractAddress) -> u256;
-
     fn transfer(ref self: TContractState, recipient: ContractAddress, amount: u256) -> bool;
-
     fn transfer_from(
         ref self: TContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256
     ) -> bool;
-
     fn approve(ref self: TContractState, spender: ContractAddress, amount: u256) -> bool;
 }
 
 #[starknet::contract]
 mod Ticket {
-    use starknet::{
-        ContractAddress, get_caller_address, get_contract_address,
-        storage_access::StorageBaseAddress
-    };
+    use starknet::{ContractAddress, get_caller_address, get_contract_address, storage::Map,};
     use super::IERC20DispatcherTrait;
     use super::IERC20Dispatcher;
     use super::IGetTicket;
     #[storage]
     struct Storage {
-        ticketEvents: LegacyMap::<u256, TicketEvent>,
-        TicketCommitments: LegacyMap::<u256, TicketCommitment>,
-        nullifierHashes: LegacyMap::<u256, bool>,
+        ticketEvents: Map::<u256, TicketEvent>,
+        TicketCommitments: Map::<u256, TicketCommitment>,
+        nullifierHashes: Map::<u256, bool>,
         event_id: u256,
         verifier: felt252
     }
+
     #[constructor]
     fn constructor(ref self: ContractState, _verifier: felt252) {
         self.event_id.write(0);
         self.verifier.write(_verifier);
     }
+
     #[derive(Drop, Serde, starknet::Store)]
     pub struct TicketEvent {
         creator: ContractAddress,
@@ -77,6 +69,7 @@ mod Ticket {
         noOfTicketAvl: u128,
         customToken: ContractAddress,
     }
+
     #[derive(Drop, Serde, starknet::Store)]
     pub struct TicketCommitment {
         buyer: ContractAddress,
@@ -84,7 +77,7 @@ mod Ticket {
         used: bool,
         resale: bool,
     }
-    // creating the event there are two events 
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -92,11 +85,13 @@ mod Ticket {
         inValidatedTicket: inValidatedTicket,
         buyingTicket: buyingTicket,
     }
+
     #[derive(Drop, Serde, starknet::Event)]
     struct newTicketEvent {
         creator: ContractAddress,
         ticketEventIndex: u256,
     }
+
     #[derive(Drop, Serde, starknet::Event)]
     struct inValidatedTicket {
         buyer: ContractAddress,
@@ -106,6 +101,7 @@ mod Ticket {
         nullifierhash: u256,
         fromAddress: felt252
     }
+
     #[derive(Drop, Serde, starknet::Event)]
     struct buyingTicket {
         buyer: ContractAddress,
@@ -114,15 +110,18 @@ mod Ticket {
         commitment: u256,
     }
 
-
     #[abi(embed_v0)]
     impl Ticket of IGetTicket<ContractState> {
-        fn getEventdetails(self: @ContractState, _ticketEventIndex: u256) -> TicketEvent {
-            self.ticketEvents.read(_ticketEventIndex)
-        }
-        fn getTicket(self: @ContractState, _commitment: u256) -> TicketCommitment {
-            self.TicketCommitments.read(_commitment)
-        }
+        /// @notice Creates a new ticketed event with a specified price, event name, number of
+        /// tickets, and custom token.
+        /// This function stores the event details and emits an event to log the creation of the new
+        /// ticket event.
+        /// @params :
+        /// - `self`: A reference to the contract state.
+        /// - `_price`: The price of a ticket for this event (in `u256` format).
+        /// - `_event_name`: The name of the event (as a `felt252` string).
+        /// - `_noOfTicket`: The total number of tickets available for the event.
+        /// - `_customToken`: The address of the custom token used for payments for this event.
         fn createTicketEvent(
             ref self: ContractState,
             _price: u256,
@@ -130,7 +129,6 @@ mod Ticket {
             _noOfTicket: u128,
             _customToken: ContractAddress
         ) {
-            // updating ticket event index 
             let eventIndex = self.event_id.read() + 1;
             let _ticket_event = TicketEvent {
                 creator: get_caller_address(),
@@ -146,11 +144,26 @@ mod Ticket {
                     newTicketEvent { creator: get_caller_address(), ticketEventIndex: eventIndex, }
                 );
         }
+
+        /// @dev This function calculates the fees for a ticket and the total price.
+        /// @param _ticketPrice The original price of the ticket.
+        /// @return (fees, total) Returns the calculated fee and the total price (including fees).
         fn calculateFees(self: @ContractState, _ticketPrice: u256) -> (u256, u256) {
             let fees = _ticketPrice / 100;
             let total = fees + _ticketPrice;
             (fees, total)
         }
+
+        /// @notice This function allows users to purchase a ticket for an event by transferring the
+        /// ticket price in the specified token to the contract. It updates the ticket commitment
+        /// and decreases the number of available tickets for the event. The ticket purchase is
+        /// confirmed through an emitted event.
+        /// @dev Function to purchase a ticket for an event. It transfers the ticket price from the
+        /// buyer to the event contract, stores the ticket commitment, and updates the event with
+        /// one less available ticket.
+        /// @param event_index The index of the event for which the ticket is being purchased.
+        /// @param commitment A unique commitment value representing the ticket purchase.
+        /// @param token_address The address of the token used to pay for the ticket.
         fn buyTicket(
             ref self: ContractState,
             event_index: u256,
@@ -164,7 +177,6 @@ mod Ticket {
             let noOfTicket = self.ticketEvents.read(event_index).noOfTicketAvl;
             assert(noOfTicket >= 1, 'No tickets left');
             assert(token.allowance(caller, contract_address) >= price, 'allow first');
-            // tranfering the total token from the user to the this contract 
             let status = token.transfer_from(caller, contract_address, price);
             assert(status == true, 'transfer failed');
             let ticket_commitment = TicketCommitment {
@@ -180,11 +192,9 @@ mod Ticket {
                         ..self.ticketEvents.read(event_index),
                     }
                 );
-
             let event_creator = self.ticketEvents.read(event_index).creator;
             let status = token.transfer(event_creator, price);
             assert(status == true, 'invalid');
-
             self
                 .emit(
                     buyingTicket {
@@ -197,6 +207,13 @@ mod Ticket {
         }
 
 
+        /// @notice Verifies if a ticket commitment is valid and has not been used before.
+        /// @dev This function checks if the ticket has already been invalidated by verifying the
+        /// nullifier hash.
+        /// It also ensures the ticket commitment is marked as used.
+        /// @param _commitment The unique commitment associated with the ticket.
+        /// @param _nullifierhash The hash used to check if the ticket has already been nullified.
+        /// @return bool Returns true if the ticket is valid and has not been used, otherwise false.
         fn verifyTicket(self: @ContractState, _commitment: u256, _nullifierhash: u256) -> bool {
             if (self.nullifierHashes.read(_nullifierhash)) {
                 return false;
@@ -207,15 +224,15 @@ mod Ticket {
             return true;
         }
 
-        // function resealling of the ticket of the ticket . 
-        // so transfer ticket we have to make some changes related to the secret and nullifier 
-        // the person who get the ticket provide the nullifierhash and commitment hash 
-        // first we have to flag the ticket which is want to be resaled 
-
-        //so the actual owner of the ticket is first authorized that the ticket is belong to him and want to resale 
-        // to know the actual owner of the ticket there is 2 ways 
-        //1 provide the proof and then verify the proof but it take the l2tol1 messaging 
-        //2 the origin owner of the ticket address is same as the one who calling the this approve to resale the ticket 
+        /// @notice Approves a ticket for resale by marking it as available for resale.
+        /// @dev This function verifies the ticket's validity and checks that the caller is the
+        /// actual owner of the ticket.
+        /// It allows the ticket owner to approve the resale, enabling the ticket to be transferred
+        /// to another buyer.
+        /// @param _commitment The unique commitment associated with the ticket to be resold.
+        /// @param _nullifierhash The hash used to verify the ticket's validity.
+        /// @require The ticket must be valid and not previously used.
+        /// @require The caller must be the original buyer of the ticket.
         fn approveToTicketResale(ref self: ContractState, _commitment: u256, _nullifierhash: u256) {
             assert(self.verifyTicket(_commitment, _nullifierhash), 'ticket is not valid');
             let caller = get_caller_address();
@@ -223,31 +240,30 @@ mod Ticket {
                 self.TicketCommitments.read(_commitment).buyer == caller,
                 'unauthorized ticket owner'
             );
-            // till now its that the caller of this function actuall buy the ticket and it is not used yet 
             self
                 .TicketCommitments
                 .write(
                     _commitment,
                     TicketCommitment { resale: true, ..self.TicketCommitments.read(_commitment) }
                 );
-        // this ticket is now available for the resale   
-        // transfer the token to the buyer of the ticket
         }
 
-        // this function is called by the person who want to buy the resaled ticket
-
+        /// @notice Buys a resale ticket from the original ticket holder.
+        /// @dev This function verifies the validity of the original ticket, checks if it's marked
+        /// for resale, calculates resale fees, transfers tokens accordingly, and creates a new
+        /// ticket commitment for the buyer.
+        /// @param newCommitment The unique commitment for the new ticket being purchased.
+        /// @param oldNullifier The hash used to invalidate the old ticket.
+        /// @param oldCommitment The unique commitment of the original ticket being resold.
+        /// @require The original ticket must be valid and marked for resale.
+        /// @require The buyer must have enough allowance for the total ticket cost.
         fn buyResaleTicket(
             ref self: ContractState, newCommitment: u256, oldNullifier: u256, oldCommitment: u256
         ) {
-            // in this the token is send to the realholder of the ticket addresss
-            // some of the fees of the resaling ticket is also been taken to it 
-
-            //verfy that the old ticket is verified 
+            // Verify that the old ticket is valid and not previously nullified.
             assert(self.verifyTicket(oldCommitment, oldNullifier), 'ticket is not valid');
-            //old ticket is ready to resale 
+            // Check if the old ticket is marked for resale.
             assert(self.TicketCommitments.read(oldCommitment).resale, 'ticket is not for resale');
-
-            //calculate the fees of the resaling of the ticket
             let event_index = self.TicketCommitments.read(oldCommitment).ticketEventIndex;
             let event = self.ticketEvents.read(event_index);
             let (fees, total) = self.calculateFees(event.price);
@@ -257,43 +273,33 @@ mod Ticket {
                 token.allowance(get_caller_address(), get_contract_address()) >= total,
                 'allow first'
             );
-            // tranfering the total token from the user to the this contract 
+            // Ensure the buyer has approved enough tokens for the transaction.
             let status = token.transfer_from(get_caller_address(), get_contract_address(), total);
             assert(status == true, 'transfer failed');
-            // allowance of the token to this fucntion should be total 
-            // invalidate the ticket // or mark them that it has been used 
-            self
-                .TicketCommitments
-                .write(
-                    oldCommitment,
-                    TicketCommitment { used: false, ..self.TicketCommitments.read(oldCommitment) }
-                );
-
-            //also nullifies the ticket  the ticket
-            self.nullifierHashes.write(oldNullifier, true);
-
-            // make the new ticket with the new commitment and nullifier hash 
-            // making new commitment 
             let new_ticket_commitment = TicketCommitment {
                 buyer: get_caller_address(),
                 ticketEventIndex: event_index,
                 used: true,
                 resale: false
             };
-
-            self.TicketCommitments.write(newCommitment, new_ticket_commitment);
-
-            // the kick is the the buyer hash to pay the value of 101% of the ticket price
-            // transfer token to the first owner of the ticket
+            // Transfer the original ticket price to the original ticket holder.
             let buyer = self.TicketCommitments.read(oldCommitment).buyer;
             let status = token.transfer(buyer, event.price);
             assert(status == true, 'transfer failed buyer');
-
-            // the 1% is the fees of the resaling of the ticket goes to the event creator 
+            // the 1% is the fees of the resaling of the ticket goes to the event creator
             let status = token.transfer(event.creator, fees);
             assert(status == true, 'transfer failed event creator');
-
-            // emit event that the ticket is resaled sucessfully 
+            // Write the new ticket commitment into the state.
+            self.TicketCommitments.write(newCommitment, new_ticket_commitment);
+            // Nullify the old ticket using the nullifier hash.
+            self.nullifierHashes.write(oldNullifier, true);
+            // Invalidate the old ticket by marking it as unused.
+            self
+                .TicketCommitments
+                .write(
+                    oldCommitment,
+                    TicketCommitment { used: false, ..self.TicketCommitments.read(oldCommitment) }
+                );
 
             self
                 .emit(
@@ -305,37 +311,26 @@ mod Ticket {
                     }
                 );
         }
-    // fn refundAll(ref self : ContractState ) { 
 
-    //     // HOW TO CALCULATE OF THIS IN REAL CASE SCENARIO 
-
-    //     let event = self.ticketEvents.read(self.ticketEventIndex.read());
-    //     // if the timestamp is greator then some set timestamp for that event 
-    //     // assert(event.timestamp >= 24564655 , "event is not over yet");
-    //     assert(event.creator == get_caller_address() , 'unauthorized person calling this function');
-    // // all the ticket which is not used yet 
-
-    // let counter = 0 
-    // loop {
-    //     if ( self.TicketCommitments.len() <= counter ) {
-    //         break ;
-    // } 
-    // }
-
-    // //fucntion if the event is over and the ticket is notinvalidated then refund the ticket holder the 50% of the ticket price 
-
-    //     }
-    // invalidate function should be on the verfiercontract ;
-    // event should emit which that the ticket is invalidated ; 
-    // if this event is listen then notify the ticket creator for that ; 
-
-    // so what does the value should contain 
-    // public intputs and true/ false 
-    // the nullifier hash 
-    // the commitment hash 
-
+        fn getEventdetails(self: @ContractState, _ticketEventIndex: u256) -> TicketEvent {
+            self.ticketEvents.read(_ticketEventIndex)
+        }
+        fn getTicket(self: @ContractState, _commitment: u256) -> TicketCommitment {
+            self.TicketCommitments.read(_commitment)
+        }
     }
 
+    /// @notice Invalidates a ticket when called by the designated verifier contract.
+    /// @dev This function checks that the caller is authorized,
+    /// writes the nullifier to the state to prevent reuse,
+    /// and marks the ticket commitment as unused.
+    /// It then emits an event indicating the invalidation of the ticket.
+    /// @param from_address The address of the caller, which should be the verifier contract.
+    /// @param nullifier1 The lower part of the nullifier hash.
+    /// @param nullifier2 The upper part of the nullifier hash.
+    /// @param commitment1 The lower part of the commitment hash.
+    /// @param commitment2 The upper part of the commitment hash.
+    /// @require The caller must be the authorized verifier contract.
     #[l1_handler]
     fn invalidateTicketL1Handler(
         ref self: ContractState,
@@ -346,28 +341,16 @@ mod Ticket {
         commitment2: u128
     ) {
         let verifier = self.verifier.read();
-        // contract address checking that it  is comming from the correct verifier contract 
         assert(from_address == verifier, 'unauthorized caller');
-        // first we have correctly serialized this value fucntion into this valueFromL1 struct 
         let nullifierhash = u256 { low: nullifier1, high: nullifier2 };
         let commitmenthash = u256 { low: commitment1, high: commitment2 };
-
-        // the calling of this is the creator of the ticket event 
-        // assert(self.verifyTicket(commitmenthash , nullifierhash) , 'ticket is not valid'); 
-
         self.nullifierHashes.write(nullifierhash, true);
-
         self
             .TicketCommitments
             .write(
                 commitmenthash,
                 TicketCommitment { used: false, ..self.TicketCommitments.read(commitmenthash) }
             );
-
-        // if all this is sucessfull then transfer the token to the creator of the event  
-
-        // transferring the token to the creator of the event 
-
         self
             .emit(
                 inValidatedTicket {
@@ -383,6 +366,4 @@ mod Ticket {
                 }
             );
     }
-// making  the refund to all the ticket holder and event creator once event is over 
-
 }
